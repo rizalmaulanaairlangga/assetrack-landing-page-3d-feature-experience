@@ -81,6 +81,211 @@
         backdrop-filter: blur(14px);
         border-bottom: 1px solid var(--line);
       }
+      #modeBtn {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--bone);
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      #modeBtn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      #modeBtn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      #modeBtn .ic {
+        width: 20px;
+        height: 20px;
+      }
+      #modeBtn .ic-moon {
+        display: none;
+      }
+      body.night #modeBtn .ic-sun {
+        display: none;
+      }
+      body.night #modeBtn .ic-moon {
+        display: block;
+      }
+      body.night .nav {
+        background: rgba(4, 8, 14, 0.85);
+      }
+      body.night .glass-card {
+        background: linear-gradient(
+          135deg,
+          rgba(235, 230, 220, 0.8),
+          rgba(226, 220, 208, 0.68)
+        );
+      }
+      .nav,
+      .glass-card {
+        transition: background 0.6s ease;
+      }
+      #menuBtn {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--bone);
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      #menuBtn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      #menuBtn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      #menuBtn .ic {
+        width: 20px;
+        height: 20px;
+      }
+      #menuOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: flex;
+        justify-content: flex-end;
+        background: rgba(4, 9, 16, 0.45);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.35s ease,
+          visibility 0.35s;
+      }
+      #menuOverlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+      .menu-panel {
+        width: min(420px, 92vw);
+        height: 100%;
+        overflow-y: auto;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.86),
+          rgba(244, 241, 234, 0.78)
+        );
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-left: 1px solid rgba(255, 255, 255, 0.65);
+        box-shadow: -24px 0 60px rgba(23, 43, 58, 0.18);
+        padding: 26px 28px 34px;
+        transform: translateX(24px);
+        transition: transform 0.35s ease;
+      }
+      #menuOverlay.open .menu-panel {
+        transform: none;
+      }
+      body.night #menuOverlay {
+        background: rgba(3, 7, 13, 0.55);
+      }
+      body.night .menu-panel {
+        background: linear-gradient(
+          135deg,
+          rgba(16, 24, 36, 0.92),
+          rgba(10, 17, 27, 0.86)
+        );
+        border-left-color: rgba(234, 241, 247, 0.14);
+        box-shadow: -24px 0 60px rgba(0, 0, 0, 0.5);
+      }
+      .menu-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        color: #0f7a4e;
+        margin-bottom: 14px;
+      }
+      body.night .menu-head {
+        color: var(--accent);
+      }
+      #menuClose {
+        width: 44px;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #475569;
+        background: transparent;
+        border: 1px solid rgba(23, 43, 58, 0.2);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      #menuClose .ic {
+        width: 18px;
+        height: 18px;
+      }
+      #menuClose:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      #menuClose:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      body.night #menuClose {
+        color: #dfe7f0;
+        border-color: rgba(234, 241, 247, 0.25);
+      }
+      .menu-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .menu-list button {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        padding: 15px 12px;
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid rgba(23, 43, 58, 0.1);
+        color: #172b3a;
+        font-size: 20px;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+      .menu-list button b {
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        color: #0f7a4e;
+        font-weight: 700;
+      }
+      .menu-list button:hover {
+        background: rgba(23, 43, 58, 0.06);
+      }
+      .menu-list button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      body.night .menu-list button {
+        color: #eaf1f7;
+        border-bottom-color: rgba(234, 241, 247, 0.14);
+      }
+      body.night .menu-list button b {
+        color: var(--accent);
+      }
+      body.night .menu-list button:hover {
+        background: rgba(234, 241, 247, 0.08);
+      }
       .brand {
         font-size: 12px;
         font-weight: 700;
@@ -133,8 +338,19 @@
         justify-content: flex-start;
       }
       .hero-top {
-        padding-top: calc(var(--nav-h) + 26px);
+        padding: calc(var(--nav-h) + 26px) 30px 28px;
         max-width: 650px;
+        background: linear-gradient(
+          100deg,
+          rgba(4, 9, 16, 0.52),
+          rgba(4, 9, 16, 0.18) 55%,
+          transparent 75%
+        );
+        border-radius: 20px;
+      }
+      .h-hero,
+      .hero-top .body-lg {
+        text-shadow: 0 2px 18px rgba(3, 8, 14, 0.55);
       }
       .eyebrow,
       .kicker {
@@ -154,7 +370,7 @@
         background: var(--accent);
       }
       .kicker b {
-        color: var(--accent);
+        color: #0f7a4e;
       }
       .display {
         font-weight: 400;
@@ -195,11 +411,16 @@
         font-size: 10px;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--bone-dim, #a6b7c8);
-        border: 1px solid var(--line);
+        color: #33475c;
+        border: 1px solid rgba(23, 43, 58, 0.18);
         padding: 7px 11px;
         border-radius: 999px;
-        background: rgba(230, 238, 246, 0.04);
+        background: rgba(255, 255, 255, 0.55);
+      }
+      body.night .chip {
+        color: #dfe7f0;
+        border-color: rgba(234, 241, 247, 0.3);
+        background: rgba(10, 18, 28, 0.55);
       }
       .hero-spacer {
         flex: 1 1 auto;
@@ -223,14 +444,22 @@
         font-size: 10px;
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: var(--muted);
-        background: rgba(7, 14, 22, 0.74);
-        border: 1px solid var(--line);
+        color: #33475c;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(23, 43, 58, 0.14);
         padding: 9px 13px;
         border-radius: 999px;
         backdrop-filter: blur(8px);
       }
       .cam-label b {
+        color: #0f7a4e;
+      }
+      body.night .cam-label {
+        color: #cdd6e2;
+        background: rgba(8, 14, 24, 0.8);
+        border-color: rgba(234, 241, 247, 0.22);
+      }
+      body.night .cam-label b {
         color: var(--accent);
         font-weight: 700;
       }
@@ -319,27 +548,29 @@
         }
       }
       .glass-card {
-        max-width: 530px;
+        max-width: 560px;
         background: linear-gradient(
           135deg,
-          rgba(13, 24, 36, 0.8),
-          rgba(13, 24, 36, 0.58)
+          rgba(255, 255, 255, 0.82),
+          rgba(244, 241, 234, 0.7)
         );
-        backdrop-filter: blur(16px) saturate(1.25);
-        -webkit-backdrop-filter: blur(16px) saturate(1.25);
-        border: 1px solid rgba(234, 241, 247, 0.16);
+        backdrop-filter: blur(20px) saturate(1.1);
+        -webkit-backdrop-filter: blur(20px) saturate(1.1);
+        border: 1px solid rgba(255, 255, 255, 0.65);
         border-radius: 18px;
-        padding: 26px 28px;
+        padding: 28px 30px;
         box-shadow:
-          0 18px 50px rgba(2, 8, 16, 0.45),
-          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+          0 24px 60px rgba(23, 43, 58, 0.18),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
       }
       .glass-card .h-sec {
         margin: 0;
+        color: #172b3a;
+        font-size: clamp(26px, 3vw, 42px);
       }
       .glass-card .body-lg {
         margin: 14px 0 0;
-        color: #cdd9e6;
+        color: #475569;
       }
       @media (max-width: 860px) {
         .sec-left {
@@ -377,7 +608,86 @@
       <div class="nav-hint">
         <span class="dot"></span> scroll - explore fitur
       </div>
+      <button
+        id="modeBtn"
+        type="button"
+        aria-pressed="false"
+        aria-label="Aktifkan mode malam"
+      >
+        <svg class="ic ic-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle
+            cx="12"
+            cy="12"
+            r="4.5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <path
+            d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+        <svg class="ic ic-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+      <button
+        id="menuBtn"
+        type="button"
+        aria-expanded="false"
+        aria-controls="menuOverlay"
+        aria-label="Buka menu fitur"
+      >
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M4 7h16M4 12h16M4 17h16"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
     </nav>
+    <div
+      id="menuOverlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menu fitur"
+    >
+      <div class="menu-panel">
+        <div class="menu-head">
+          <span>FEATURES</span>
+          <button id="menuClose" type="button" aria-label="Tutup menu fitur">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M6 6l12 12M18 6L6 18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <nav class="menu-list" aria-label="Daftar fitur">
+          <button type="button" data-goto="0"><b>01</b>Overview</button>
+          <button type="button" data-goto="1"><b>02</b>Asset Management</button>
+          <button type="button" data-goto="2"><b>03</b>Asset Borrowing</button>
+          <button type="button" data-goto="3"><b>04</b>Maintenance</button>
+          <button type="button" data-goto="4"><b>05</b>Depreciation</button>
+          <button type="button" data-goto="5"><b>06</b>Monitoring</button>
+          <button type="button" data-goto="6"><b>07</b>Audit Trail</button>
+        </nav>
+      </div>
+    </div>
     <div class="cam-label">
       <b id="camMode">01 - OVERVIEW</b><span id="camInfo">facing west</span>
     </div>
@@ -410,65 +720,91 @@
       </section>
       <section class="sec sec-left" data-cam="1">
         <div class="glass-card" data-rv>
-          <div class="kicker"><b>02</b> - Asset Management</div>
+          <div class="kicker"><b>02 - ASSET MANAGEMENT</b></div>
           <h2 class="display h-sec">
-            Semua aset tercatat, terlacak, siap diaudit.
+            SEMUA ASET TERCATAT, TERLACAK, SIAP DIAUDIT.
           </h2>
           <p class="body-lg">
-            Daftarkan projector sekali, tempel QR AST-93 sebagai identitasnya.
-            Lokasi, jadwal maintenance, dan nilai terkini tampil di layar Detail
-            Aset saat kamera tiba. Alur yang sama berlaku untuk setiap aset di
-            kantor.
+            Setiap aset memiliki identitas unik berupa asset tag dan QR code.
+            Data seperti kategori, serial number, harga perolehan, lokasi,
+            pengguna, garansi, nilai buku, dan riwayat maintenance tersimpan
+            dalam satu profil aset. QR dapat dipindai untuk membuka detail dan
+            histori aset secara langsung.
           </p>
         </div>
       </section>
       <section class="sec sec-right" data-cam="2">
         <div class="glass-card" data-rv>
-          <div class="kicker"><b>03 - Asset Borrowing</b></div>
-          <h2 class="display h-sec">Pinjam aset dari tablet.</h2>
+          <div class="kicker"><b>03 - ASSET BORROWING</b></div>
+          <h2 class="display h-sec">
+            PINJAM ASET DENGAN ALUR YANG TERKONTROL.
+          </h2>
           <p class="body-lg">
-            Employee memegang tablet di tangan kanan. Tablet memindai QR laptop,
-            lalu menampilkan form peminjaman.
+            Karyawan dapat mengajukan peminjaman aset dengan menentukan durasi
+            penggunaan. Sistem mencatat siapa yang meminjam, periode peminjaman,
+            status approval, serta kondisi aset saat dikembalikan. Check-in
+            dapat dilakukan melalui QR dan sistem memberikan alert untuk
+            peminjaman yang melewati batas waktu.
           </p>
         </div>
       </section>
       <section class="sec sec-right" data-cam="3">
         <div class="glass-card" data-rv>
-          <div class="kicker"><b>04 - Maintenance Schedule</b></div>
-          <h2 class="display h-sec">Area teknisi.</h2>
+          <div class="kicker"><b>04 - MAINTENANCE SCHEDULE</b></div>
+          <h2 class="display h-sec">
+            JADWAL PERAWATAN TERCATAT, KONDISI ASET TETAP TERKONTROL.
+          </h2>
           <p class="body-lg">
-            Teknisi di atas tangga A-frame di depan unit AC, toolbox di
-            sampingnya sebagai satu aktivitas maintenance.
+            Preventive dan corrective maintenance dapat dijadwalkan secara
+            berkala. Sistem memberikan reminder sebelum jadwal, mencatat
+            tanggal, deskripsi pekerjaan, biaya, vendor, serta histori
+            maintenance setiap aset. Status pekerjaan dapat dipantau dari
+            Scheduled hingga In Progress dan Done.
           </p>
         </div>
       </section>
       <section class="sec sec-right" data-cam="4">
         <div class="glass-card" data-rv>
-          <div class="kicker"><b>05 - Depreciation Engine</b></div>
-          <h2 class="display h-sec">Area depresiasi.</h2>
+          <div class="kicker"><b>05 - DEPRECIATION ENGINE</b></div>
+          <h2 class="display h-sec">
+            NILAI ASET TERHITUNG SEIRING PERJALANAN WAKTU.
+          </h2>
           <p class="body-lg">
-            Laptop dipasangkan dengan visualisasi nilai buku yang menurun
-            seiring waktu.
+            Nilai buku aset dihitung secara otomatis berdasarkan harga
+            perolehan, nilai residu, dan umur ekonomis. Sistem menghitung
+            depresiasi secara berkala dan menyediakan nilai buku terkini serta
+            laporan depresiasi berdasarkan aset, kategori, atau departemen untuk
+            kebutuhan akuntansi dan audit.
           </p>
         </div>
       </section>
       <section class="sec sec-left" data-cam="5">
         <div class="glass-card" data-rv>
-          <div class="kicker"><b>06 - Monitoring Dashboard</b></div>
-          <h2 class="display h-sec">Area monitoring.</h2>
+          <div class="kicker"><b>06 - MONITORING DASHBOARD</b></div>
+          <h2 class="display h-sec">
+            SELURUH KONDISI ASET TERLIHAT DALAM SATU DASHBOARD.
+          </h2>
           <p class="body-lg">
-            Dashboard besar dengan presenter di sisi kanannya, terbaca dari
-            jarak cukup jauh.
+            Dashboard memberikan gambaran real-time mengenai jumlah aset,
+            status, serta distribusinya berdasarkan kategori dan lokasi.
+            Informasi tersebut dapat digunakan untuk memantau kondisi aset,
+            mengidentifikasi kebutuhan maintenance, melihat aset yang dipinjam,
+            dan mendukung keputusan pengelolaan aset.
           </p>
         </div>
       </section>
       <section class="sec sec-right" data-cam="6">
         <div class="glass-card" data-rv>
-          <div class="kicker"><b>07 - Audit Trail</b></div>
-          <h2 class="display h-sec">Area audit.</h2>
+          <div class="kicker"><b>07 - AUDIT TRAIL</b></div>
+          <h2 class="display h-sec">
+            SETIAP PERUBAHAN ASET MEMILIKI RIWAYAT YANG DAPAT DITELUSURI.
+          </h2>
           <p class="body-lg">
-            Timeline aktivitas aset dengan admin memegang laporan sebagai
-            konteks.
+            Aktivitas aset seperti pendaftaran, peminjaman, pengembalian,
+            maintenance, perubahan status, dan pembaruan data tercatat dalam
+            histori. Audit trail membantu membandingkan kondisi fisik dengan
+            data sistem serta menyediakan laporan audit yang dapat diekspor
+            dalam format PDF.
           </p>
         </div>
       </section>
@@ -1383,7 +1719,8 @@
         scene.fog = new THREE.FogExp2(0x142233, 0.01);
         const camera = new THREE.PerspectiveCamera(48, vw() / vh(), 0.1, 220);
         scene.add(camera);
-        scene.add(new THREE.HemisphereLight(0xfff6e6, 0x1a2a3a, 1.0));
+        const hemi = new THREE.HemisphereLight(0xfff6e6, 0x1a2a3a, 1.0);
+        scene.add(hemi);
         const key = new THREE.DirectionalLight(0xfff4df, 1.05);
         key.position.set(6, 14, 8);
         key.castShadow = true;
@@ -1468,6 +1805,7 @@
         floor.rotation.x = -Math.PI / 2;
         floor.position.set(0, 0, 0);
         room.add(floor);
+        const wallMats = [];
         function wall(w, h, x, y, z, ry, c) {
           const m = new THREE.Mesh(
             new THREE.PlaneGeometry(w, h),
@@ -1479,13 +1817,157 @@
           m.position.set(x, y, z);
           m.rotation.y = ry;
           m.userData.noCast = true;
+          wallMats.push(m.material);
           room.add(m);
           return m;
         }
         wall(30, 4, 0, 2, -12, 0);
         wall(30, 4, 0, 2, 12, Math.PI);
-        wall(24, 4, 15, 2, 0, -Math.PI / 2);
-        wall(24, 4, -15, 2, 0, Math.PI / 2);
+        const glassMat = new THREE.MeshStandardMaterial({
+          color: 0xcfe8f2,
+          roughness: 0.15,
+          metalness: 0.4,
+          transparent: true,
+          opacity: 0.32,
+          emissive: 0xbfe3f2,
+          emissiveIntensity: 0.35,
+          side: THREE.DoubleSide,
+        });
+        function exteriorTex(night) {
+          return canvasTex(
+            function (x, w, h) {
+              const sky = x.createLinearGradient(0, 0, 0, h);
+              if (!night) {
+                sky.addColorStop(0, "#a8d4ea");
+                sky.addColorStop(0.62, "#e8ecdd");
+                sky.addColorStop(1, "#fdf3df");
+              } else {
+                sky.addColorStop(0, "#04070f");
+                sky.addColorStop(0.62, "#0a1528");
+                sky.addColorStop(1, "#0e1e3a");
+              }
+              x.fillStyle = sky;
+              x.fillRect(0, 0, w, h);
+              const rng = mulberry(night ? 99 : 7);
+              if (!night) {
+                x.fillStyle = "rgba(255,246,220,.9)";
+                x.beginPath();
+                x.arc(w * 0.72, h * 0.3, 26, 0, TAU);
+                x.fill();
+                x.fillStyle = "rgba(255,246,220,.25)";
+                x.beginPath();
+                x.arc(w * 0.72, h * 0.3, 44, 0, TAU);
+                x.fill();
+                x.fillStyle = "rgba(143,169,184,.85)";
+                for (let i = 0; i < 5; i++) {
+                  const bw = 40 + rng() * 70,
+                    bh = 50 + rng() * 70,
+                    bx = (i * w) / 5 + 8;
+                  x.fillRect(bx, h - bh, bw, bh);
+                }
+              } else {
+                x.fillStyle = "#e8eef7";
+                for (let i = 0; i < 60; i++) {
+                  x.globalAlpha = 0.25 + rng() * 0.65;
+                  x.fillRect(rng() * w, rng() * h * 0.7, 2, 2);
+                }
+                x.globalAlpha = 1;
+                x.fillStyle = "rgba(70,120,180,.16)";
+                x.fillRect(0, h * 0.72, w, h * 0.28);
+                x.fillStyle = "#0a1226";
+                for (let i = 0; i < 4; i++) {
+                  const bw = 52 + rng() * 60,
+                    bh = 70 + rng() * 80,
+                    bx = (i * w) / 4 + 10;
+                  x.fillRect(bx, h - bh, bw, bh);
+                }
+                x.fillStyle = "#ffd27a";
+                for (let i = 0; i < 46; i++) {
+                  x.fillRect(
+                    14 + rng() * (w - 28),
+                    h - 130 + rng() * 118,
+                    4,
+                    5,
+                  );
+                }
+              }
+            },
+            512,
+            256,
+          );
+        }
+        const dayExtTex = exteriorTex(false);
+        const nightExtTex = exteriorTex(true);
+        const exteriorMat = new THREE.MeshBasicMaterial({ map: dayExtTex });
+        const frameMat = M(0x39424e, 0.4, 0.5);
+        function wallSeg(wd, h, px, py, pz, ry) {
+          const m = new THREE.Mesh(
+            new THREE.PlaneGeometry(wd, h),
+            new THREE.MeshStandardMaterial({
+              color: 0x8a7358,
+              roughness: 0.92,
+            }),
+          );
+          m.position.set(px, py, pz);
+          m.rotation.y = ry;
+          m.userData.noCast = true;
+          wallMats.push(m.material);
+          room.add(m);
+          return m;
+        }
+        function windowWall(x, ry, zones) {
+          const out = x > 0 ? 0.7 : -0.7;
+          wallSeg(24, 1.2, x, 0.6, 0, ry);
+          wallSeg(24, 1.2, x, 3.4, 0, ry);
+          const bounds = [-12];
+          zones.forEach(function (zc) {
+            bounds.push(zc - 1.0, zc + 1.0);
+          });
+          bounds.push(12);
+          for (let i = 0; i < bounds.length; i += 2) {
+            const a = bounds[i],
+              b = bounds[i + 1],
+              mid = (a + b) / 2;
+            if (b - a > 0.01) wallSeg(b - a, 1.6, x, 2.0, mid, ry);
+          }
+          zones.forEach(function (zc) {
+            const gl = new THREE.Mesh(
+              new THREE.PlaneGeometry(2.0, 1.6),
+              glassMat,
+            );
+            gl.position.set(x, 2.0, zc);
+            gl.rotation.y = ry;
+            gl.castShadow = false;
+            gl.receiveShadow = false;
+            gl.userData.noCast = true;
+            room.add(gl);
+            const fr = [
+              [0.12, 0.1, 2.2, 0, 0.85, 0],
+              [0.12, 0.1, 2.2, 0, -0.85, 0],
+              [0.12, 1.8, 0.1, 0, 0, 1.05],
+              [0.12, 1.8, 0.1, 0, 0, -1.05],
+              [0.08, 1.6, 0.05, 0, 0, 0],
+              [0.08, 0.05, 2.0, 0, 0, 0],
+            ];
+            fr.forEach(function (f) {
+              const m = new THREE.Mesh(
+                new THREE.BoxGeometry(f[0], f[1], f[2]),
+                frameMat,
+              );
+              m.position.set(x, 2.0 + f[4], zc + f[5]);
+              room.add(m);
+            });
+            const ext = new THREE.Mesh(
+              new THREE.PlaneGeometry(3.4, 2.8),
+              exteriorMat,
+            );
+            ext.position.set(x + out, 2.0, zc);
+            ext.rotation.y = ry;
+            room.add(ext);
+          });
+        }
+        windowWall(15, -Math.PI / 2, [-5, -2, 1]);
+        windowWall(-15, Math.PI / 2, [-8, -5, -2]);
         box(30, 0.14, 0.08, 0x3a2c1c, 0, 0.07, -11.94, 0);
         box(30, 0.14, 0.08, 0x3a2c1c, 0, 0.07, 11.94, 0);
         box(0.08, 0.14, 24, 0x3a2c1c, 14.94, 0.07, 0, 0);
@@ -1506,6 +1988,7 @@
         ceil.position.set(0, 4, 0);
         ceil.userData.noCast = true;
         room.add(ceil);
+        const lampMats = [];
         for (const lx of [-9, 0, 9])
           for (const lz of [-6, 6]) {
             const lamp = new THREE.Mesh(
@@ -1513,6 +1996,7 @@
               new THREE.MeshBasicMaterial({ color: 0xfff6e2 }),
             );
             lamp.position.set(lx, 3.93, lz);
+            lampMats.push(lamp.material);
             room.add(lamp);
           }
         /* Office props: desks north, cabinets south, whiteboard west, plants */
@@ -2643,6 +3127,87 @@
             o.receiveShadow = true;
           }
         });
+        /* Day/night environment controller: one mode value drives lights, materials and exterior. Cameras and shots below stay untouched. */
+        const featZones = [
+          { x: 9, z: 7 },
+          { x: 9.3, z: 3.5 },
+          { x: 9.8, z: -9.6 },
+          { x: -9, z: 8 },
+          { x: -9, z: -9.5 },
+          { x: -13.2, z: 0.8 },
+        ];
+        const featLights = featZones.map(function (fz) {
+          const s = new THREE.SpotLight(0xffd9a8, 0.1, 16, 0.75, 0.65, 0);
+          s.position.set(fz.x, 3.55, fz.z);
+          s.target.position.set(fz.x, 0, fz.z);
+          scene.add(s);
+          scene.add(s.target);
+          return { light: s, cur: 0.1 };
+        });
+        let nightTarget = 0;
+        let nightT = 0;
+        try {
+          nightTarget =
+            window.localStorage.getItem("assetrack-mode") === "night" ? 1 : 0;
+        } catch (e) {}
+        nightT = nightTarget;
+        const _cA = new THREE.Color();
+        const _cB = new THREE.Color();
+        function mixC(hexDay, hexNight, t, target) {
+          _cA.set(hexDay);
+          _cB.set(hexNight);
+          return target.copy(_cA).lerp(_cB, t);
+        }
+        function applyEnv(t) {
+          key.intensity = 1.05 + (0.14 - 1.05) * t;
+          mixC(0xfff4df, 0x8fb4ff, t, key.color);
+          hemi.intensity = 1.0 + (0.32 - 1.0) * t;
+          mixC(0xfff6e6, 0x33415e, t, hemi.color);
+          mixC(0x1a2a3a, 0x0a0f16, t, hemi.groundColor);
+          fillL.intensity = 0.3 + (0.08 - 0.3) * t;
+          backL.intensity = 0.25 + (0.1 - 0.25) * t;
+          renderer.toneMappingExposure = 1.1 + (0.95 - 1.1) * t;
+          mixC(0x142233, 0x05090f, t, scene.background);
+          mixC(0x142233, 0x05090f, t, scene.fog.color);
+          scene.fog.density = 0.01 + (0.013 - 0.01) * t;
+          for (const m of lampMats) mixC(0xfff6e2, 0xffc98f, t, m.color);
+          for (const m of wallMats) mixC(0x8a7358, 0x565064, t, m.color);
+          mixC(0xffffff, 0x8b93a6, t, floorMat.color);
+          mixC(0xe6dcc8, 0x7e8398, t, ceil.material.color);
+          mixC(0xcfe8f2, 0x14294d, t, glassMat.color);
+          glassMat.opacity = 0.32 + (0.6 - 0.32) * t;
+          mixC(0xbfe3f2, 0x16305e, t, glassMat.emissive);
+          glassMat.emissiveIntensity = 0.35 + (0.6 - 0.35) * t;
+          const wantNight = t >= 0.5;
+          if ((exteriorMat.map === dayExtTex) === wantNight) {
+            exteriorMat.map = wantNight ? nightExtTex : dayExtTex;
+          }
+        }
+        function syncModeUI() {
+          const night = nightTarget === 1;
+          document.body.classList.toggle("night", night);
+          const btn = document.getElementById("modeBtn");
+          if (btn) {
+            btn.setAttribute("aria-pressed", night ? "true" : "false");
+            btn.setAttribute(
+              "aria-label",
+              night ? "Aktifkan mode siang" : "Aktifkan mode malam",
+            );
+          }
+          try {
+            window.localStorage.setItem(
+              "assetrack-mode",
+              night ? "night" : "day",
+            );
+          } catch (e) {}
+        }
+        syncModeUI();
+        document
+          .getElementById("modeBtn")
+          .addEventListener("click", function () {
+            nightTarget = nightTarget === 1 ? 0 : 1;
+            syncModeUI();
+          });
         /* Frozen camera: endpoints, scroll mapping, easing and damping tuned per shot. See CAMERA_LOCK.md. */
         const shots = [
           {
@@ -2822,6 +3387,16 @@
           }
           camera.position.set(cur.x, cur.y, cur.z);
           camera.lookAt(cur.tx, cur.ty, cur.tz);
+          nightT = damp(nightT, nightTarget, 1.6, dt);
+          applyEnv(nightT);
+          const ai = Math.round(clamp(curF, 0, 6));
+          const zi = ai === 0 ? -1 : ai - 1;
+          for (let fi = 0; fi < featLights.length; fi++) {
+            const fl = featLights[fi];
+            const want = 0.1 + nightT * (0.25 + (fi === zi ? 0.85 : 0));
+            fl.cur = damp(fl.cur, want, 2.5, dt);
+            fl.light.intensity = fl.cur;
+          }
           curFloat = damp(curFloat, tgtFloat, 4.0, dt);
           if (Math.abs(curFloat - tgtFloat) < 0.01) curFloat = tgtFloat;
           updateFloatingScreen(floatAsset, curFloat);
@@ -2849,6 +3424,60 @@
           requestAnimationFrame(tick);
         }
         requestAnimationFrame(tick);
+        /* Landing menu: anchors into the existing scroll sections. */
+        (function () {
+          const btn = document.getElementById("menuBtn");
+          const overlay = document.getElementById("menuOverlay");
+          const closeBtn = document.getElementById("menuClose");
+          let lastFocus = null;
+          function openMenu() {
+            lastFocus = document.activeElement;
+            overlay.classList.add("open");
+            btn.setAttribute("aria-expanded", "true");
+            document.body.style.overflow = "hidden";
+            const first = overlay.querySelector("[data-goto]");
+            if (first) first.focus();
+          }
+          function closeMenu() {
+            overlay.classList.remove("open");
+            btn.setAttribute("aria-expanded", "false");
+            document.body.style.overflow = "";
+            if (lastFocus && lastFocus.focus) lastFocus.focus();
+          }
+          function gotoSection(i) {
+            const secs = [...document.querySelectorAll("[data-cam]")];
+            const s = secs[i];
+            if (!s) return;
+            const r = s.getBoundingClientRect();
+            window.scrollTo({
+              top: Math.max(
+                0,
+                Math.round(
+                  window.scrollY + r.top - (window.innerHeight - r.height) / 2,
+                ),
+              ),
+              behavior: "smooth",
+            });
+          }
+          btn.addEventListener("click", function () {
+            if (overlay.classList.contains("open")) closeMenu();
+            else openMenu();
+          });
+          closeBtn.addEventListener("click", closeMenu);
+          overlay.addEventListener("click", function (e) {
+            const t = e.target.closest("[data-goto]");
+            if (t) {
+              closeMenu();
+              gotoSection(Number(t.getAttribute("data-goto")));
+            } else if (e.target === overlay) {
+              closeMenu();
+            }
+          });
+          document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && overlay.classList.contains("open"))
+              closeMenu();
+          });
+        })();
       })();
     </script>
   </body>
