@@ -1,0 +1,2853 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AsseTrack - 3D Feature Experience</title>
+    <style>
+      :root {
+        --ink: #07101a;
+        --ink2: #0c1c2b;
+        --bone: #eaf1f7;
+        --dim: #a6b7c8;
+        --muted: #6f8194;
+        --line: rgba(234, 241, 247, 0.1);
+        --accent: #2ec27a;
+        --blue: #4b8dff;
+        --pad: clamp(20px, 3.4vw, 56px);
+        --nav-h: 64px;
+        --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: auto;
+      }
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--bone);
+        font-family: Inter, system-ui, sans-serif;
+        font-weight: 300;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+      #gl {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        background: var(--ink);
+      }
+      #vignette {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none;
+        background: radial-gradient(
+          120% 95% at 50% 38%,
+          transparent 46%,
+          rgba(3, 10, 18, 0.7) 100%
+        );
+      }
+      #grain {
+        position: fixed;
+        inset: -1px;
+        z-index: 6;
+        pointer-events: none;
+        opacity: 0.035;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+        background-size: 180px 180px;
+      }
+      .page {
+        position: relative;
+        z-index: 10;
+      }
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: var(--nav-h);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 0 var(--pad);
+        background: rgba(7, 14, 22, 0.72);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--line);
+      }
+      .brand {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand i {
+        width: 9px;
+        height: 9px;
+        border-radius: 2px;
+        background: var(--accent);
+        display: inline-block;
+        box-shadow: 0 0 10px var(--accent);
+      }
+      .brand span {
+        font-weight: 500;
+        color: var(--accent);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+      }
+      .nav-hint {
+        margin-left: auto;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 10px var(--accent);
+      }
+      .hero,
+      .sec {
+        min-height: 100svh;
+        position: relative;
+        padding: 0 var(--pad);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .hero {
+        justify-content: flex-start;
+      }
+      .hero-top {
+        padding-top: calc(var(--nav-h) + 26px);
+        max-width: 650px;
+      }
+      .eyebrow,
+      .kicker {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--dim);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .eyebrow .line {
+        flex: 0 0 28px;
+        height: 1px;
+        background: var(--accent);
+      }
+      .kicker b {
+        color: var(--accent);
+      }
+      .display {
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        line-height: 0.95;
+        text-transform: uppercase;
+      }
+      .h-hero {
+        font-size: clamp(32px, 4.4vw, 62px);
+      }
+      .h-sec {
+        font-size: clamp(28px, 3.5vw, 48px);
+        line-height: 1;
+      }
+      .body-lg {
+        font-size: clamp(14px, 1.05vw, 17px);
+        line-height: 1.68;
+        color: #b8c7d8;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.85fr);
+        gap: clamp(24px, 4vw, 68px);
+        align-items: start;
+      }
+      @media (max-width: 860px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .chip-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+      .chip {
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--bone-dim, #a6b7c8);
+        border: 1px solid var(--line);
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: rgba(230, 238, 246, 0.04);
+      }
+      .hero-spacer {
+        flex: 1 1 auto;
+        min-height: 16vh;
+      }
+      .hero-foot {
+        padding-bottom: 26px;
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+      .cam-label {
+        position: fixed;
+        left: var(--pad);
+        bottom: 18px;
+        z-index: 20;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: rgba(7, 14, 22, 0.74);
+        border: 1px solid var(--line);
+        padding: 9px 13px;
+        border-radius: 999px;
+        backdrop-filter: blur(8px);
+      }
+      .cam-label b {
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .progress {
+        position: fixed;
+        right: var(--pad);
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+      .progress i {
+        width: 2px;
+        height: 22px;
+        background: rgba(230, 238, 246, 0.14);
+        border-radius: 999px;
+        overflow: hidden;
+        display: block;
+        position: relative;
+      }
+      .progress i::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--accent);
+        transform: scaleY(var(--fill, 0));
+        transform-origin: top;
+        transition: transform 0.14s linear;
+      }
+      .progress i.on::after {
+        box-shadow: 0 0 8px var(--accent);
+      }
+      @media (max-width: 860px) {
+        .progress {
+          display: none;
+        }
+      }
+      .foot {
+        position: relative;
+        padding: 40px var(--pad) 28px;
+        border-top: 1px solid var(--line);
+        text-align: center;
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .sec-left {
+        justify-content: flex-end;
+        align-items: flex-start;
+        padding-bottom: 34vh;
+      }
+      .sec-right {
+        justify-content: flex-start;
+        align-items: flex-end;
+        padding-top: 10vh;
+      }
+      section[data-cam="3"] {
+        justify-content: center;
+        padding-top: 0;
+      }
+      @media (min-aspect-ratio: 16/10) {
+        section[data-cam="4"] {
+          justify-content: center;
+          padding-top: 0;
+        }
+      }
+      @media (max-aspect-ratio: 16/10) {
+        section[data-cam="5"] {
+          justify-content: flex-start;
+          padding-top: 10vh;
+        }
+      }
+      section[data-cam="6"] {
+        padding-top: 24vh;
+      }
+      @media (max-aspect-ratio: 16/10) {
+        section[data-cam="6"] {
+          justify-content: flex-end;
+          padding-top: 0;
+          padding-bottom: 6vh;
+        }
+      }
+      .glass-card {
+        max-width: 530px;
+        background: linear-gradient(
+          135deg,
+          rgba(13, 24, 36, 0.8),
+          rgba(13, 24, 36, 0.58)
+        );
+        backdrop-filter: blur(16px) saturate(1.25);
+        -webkit-backdrop-filter: blur(16px) saturate(1.25);
+        border: 1px solid rgba(234, 241, 247, 0.16);
+        border-radius: 18px;
+        padding: 26px 28px;
+        box-shadow:
+          0 18px 50px rgba(2, 8, 16, 0.45),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+      .glass-card .h-sec {
+        margin: 0;
+      }
+      .glass-card .body-lg {
+        margin: 14px 0 0;
+        color: #cdd9e6;
+      }
+      @media (max-width: 860px) {
+        .sec-left {
+          padding-bottom: 18vh;
+        }
+        .sec-right {
+          padding-bottom: 0;
+          padding-top: 10vh;
+        }
+        .glass-card {
+          max-width: 100%;
+        }
+      }
+      [data-rv] {
+        opacity: 0;
+        transform: translate3d(0, 16px, 0);
+        transition:
+          opacity 0.75s var(--ease),
+          transform 0.85s var(--ease);
+      }
+      [data-rv].rv-in {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gl" aria-hidden="true"></canvas>
+    <div id="vignette"></div>
+    <div id="grain"></div>
+    <nav class="nav">
+      <div class="brand">
+        <i></i> ASSETRACK <span>3D FEATURE EXPERIENCE</span>
+      </div>
+      <div class="nav-hint">
+        <span class="dot"></span> scroll - explore fitur
+      </div>
+    </nav>
+    <div class="cam-label">
+      <b id="camMode">01 - OVERVIEW</b><span id="camInfo">facing west</span>
+    </div>
+    <div class="progress" id="progress"></div>
+    <div class="page">
+      <section class="hero" data-cam="0">
+        <div class="hero-top">
+          <div class="eyebrow">
+            <span class="line"></span> Assetrack - 3D Product Story
+          </div>
+          <h1 class="display h-hero" data-rv>Kelola aset dalam satu kantor.</h1>
+          <p class="body-lg" data-rv style="margin-top: 16px">
+            Satu open-plan office. Asset Management di tenggara, Maintenance di
+            timur laut, Depresiasi di barat daya, Monitoring di barat laut.
+            Kamera membuka menghadap barat.
+          </p>
+          <div class="chip-row" data-rv>
+            <span class="chip">Asset Management</span
+            ><span class="chip">Asset Borrowing</span
+            ><span class="chip">Maintenance</span
+            ><span class="chip">Depreciation</span
+            ><span class="chip">Monitoring</span
+            ><span class="chip">Audit Trail</span>
+          </div>
+        </div>
+        <div class="hero-spacer"></div>
+        <div class="hero-foot" data-rv>
+          Scroll - mulai dari overview menghadap barat
+        </div>
+      </section>
+      <section class="sec sec-left" data-cam="1">
+        <div class="glass-card" data-rv>
+          <div class="kicker"><b>02</b> - Asset Management</div>
+          <h2 class="display h-sec">
+            Semua aset tercatat, terlacak, siap diaudit.
+          </h2>
+          <p class="body-lg">
+            Daftarkan projector sekali, tempel QR AST-93 sebagai identitasnya.
+            Lokasi, jadwal maintenance, dan nilai terkini tampil di layar Detail
+            Aset saat kamera tiba. Alur yang sama berlaku untuk setiap aset di
+            kantor.
+          </p>
+        </div>
+      </section>
+      <section class="sec sec-right" data-cam="2">
+        <div class="glass-card" data-rv>
+          <div class="kicker"><b>03 - Asset Borrowing</b></div>
+          <h2 class="display h-sec">Pinjam aset dari tablet.</h2>
+          <p class="body-lg">
+            Employee memegang tablet di tangan kanan. Tablet memindai QR laptop,
+            lalu menampilkan form peminjaman.
+          </p>
+        </div>
+      </section>
+      <section class="sec sec-right" data-cam="3">
+        <div class="glass-card" data-rv>
+          <div class="kicker"><b>04 - Maintenance Schedule</b></div>
+          <h2 class="display h-sec">Area teknisi.</h2>
+          <p class="body-lg">
+            Teknisi di atas tangga A-frame di depan unit AC, toolbox di
+            sampingnya sebagai satu aktivitas maintenance.
+          </p>
+        </div>
+      </section>
+      <section class="sec sec-right" data-cam="4">
+        <div class="glass-card" data-rv>
+          <div class="kicker"><b>05 - Depreciation Engine</b></div>
+          <h2 class="display h-sec">Area depresiasi.</h2>
+          <p class="body-lg">
+            Laptop dipasangkan dengan visualisasi nilai buku yang menurun
+            seiring waktu.
+          </p>
+        </div>
+      </section>
+      <section class="sec sec-left" data-cam="5">
+        <div class="glass-card" data-rv>
+          <div class="kicker"><b>06 - Monitoring Dashboard</b></div>
+          <h2 class="display h-sec">Area monitoring.</h2>
+          <p class="body-lg">
+            Dashboard besar dengan presenter di sisi kanannya, terbaca dari
+            jarak cukup jauh.
+          </p>
+        </div>
+      </section>
+      <section class="sec sec-right" data-cam="6">
+        <div class="glass-card" data-rv>
+          <div class="kicker"><b>07 - Audit Trail</b></div>
+          <h2 class="display h-sec">Area audit.</h2>
+          <p class="body-lg">
+            Timeline aktivitas aset dengan admin memegang laporan sebagai
+            konteks.
+          </p>
+        </div>
+      </section>
+      <footer class="foot">
+        AsseTrack - 3D scene evaluation / feature-driven layout
+      </footer>
+    </div>
+    <script src="three.min.js"></script>
+    <script>
+      (function () {
+        "use strict";
+        const clamp = (v, a, b) => Math.max(a, Math.min(b, v)),
+          lerp = (a, b, t) => a + (b - a) * t,
+          damp = (a, b, r, dt) => lerp(a, b, 1 - Math.exp(-r * dt)),
+          TAU = Math.PI * 2;
+        function mulberry(a) {
+          return function () {
+            a |= 0;
+            a = (a + 0x6d2b79f5) | 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+        function canvasTex(draw, w, h) {
+          const c = document.createElement("canvas");
+          c.width = w;
+          c.height = h;
+          draw(c.getContext("2d"), w, h);
+          const t = new THREE.CanvasTexture(c);
+          t.encoding = THREE.sRGBEncoding;
+          t.anisotropy = 4;
+          return t;
+        }
+        function mat(c, r, mt) {
+          return new THREE.MeshStandardMaterial({
+            color: c,
+            roughness: r === undefined ? 0.8 : r,
+            metalness: mt === undefined ? 0 : mt,
+          });
+        }
+        function planeTexture(t, w, h, op) {
+          const m = new THREE.Mesh(
+            new THREE.PlaneGeometry(w, h),
+            new THREE.MeshBasicMaterial({
+              map: t,
+              transparent: true,
+              opacity: op === undefined ? 1 : op,
+              side: THREE.DoubleSide,
+            }),
+          );
+          return m;
+        }
+        function drawQR(x, ox, oy, s, seed) {
+          const rng = mulberry(seed);
+          x.fillStyle = "#ffffff";
+          x.fillRect(ox, oy, s, s);
+          const n = 21,
+            cell = s / (n + 2);
+          function f(a, b) {
+            x.fillStyle = "#0b1420";
+            x.fillRect(a, b, 7 * cell, 7 * cell);
+            x.fillStyle = "#fff";
+            x.fillRect(a + cell, b + cell, 5 * cell, 5 * cell);
+            x.fillStyle = "#0b1420";
+            x.fillRect(a + 2 * cell, b + 2 * cell, 3 * cell, 3 * cell);
+          }
+          const px = ox + cell,
+            py = oy + cell;
+          f(px, py);
+          f(px + (n - 7) * cell, py);
+          f(px, py + (n - 7) * cell);
+          for (let yy = 0; yy < n; yy++)
+            for (let xx = 0; xx < n; xx++) {
+              if (
+                (xx < 7 && yy < 7) ||
+                (xx > n - 8 && yy < 7) ||
+                (xx < 7 && yy > n - 8) ||
+                xx === 6 ||
+                yy === 6
+              )
+                continue;
+              if (rng() > 0.52) {
+                x.fillStyle = "#0b1420";
+                x.fillRect(px + xx * cell, py + yy * cell, cell, cell);
+              }
+            }
+        }
+        function qrTexture(seed) {
+          return canvasTex(
+            (x) => {
+              drawQR(x, 0, 0, 256, seed || 7);
+            },
+            256,
+            256,
+          );
+        }
+        function makePerson(opts) {
+          opts = opts || {};
+          const g = new THREE.Group(),
+            cloth = opts.cloth || 0x111827,
+            cloth2 = opts.cloth2 || 0x243246,
+            skin = opts.skin || 0xe7b996;
+          const body = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.27, 0.31, 0.82, 12),
+            mat(cloth, 0.85),
+          );
+          body.position.y = 0.72;
+          g.add(body);
+          const head = new THREE.Mesh(
+            new THREE.SphereGeometry(0.2, 16, 12),
+            mat(skin, 0.6),
+          );
+          head.position.y = 1.28;
+          g.add(head);
+          const hair = new THREE.Mesh(
+            new THREE.SphereGeometry(0.21, 12, 8, 0, TAU, 0, Math.PI * 0.62),
+            mat(0x17181c, 0.9),
+          );
+          hair.position.y = 1.33;
+          g.add(hair);
+          const armGeo = new THREE.CylinderGeometry(0.065, 0.065, 0.54, 8),
+            legGeo = new THREE.CylinderGeometry(0.1, 0.11, 0.72, 8);
+          const la = new THREE.Mesh(armGeo, mat(cloth2)),
+            ra = new THREE.Mesh(armGeo, mat(cloth2));
+          la.position.set(-0.3, 0.78, 0);
+          ra.position.set(0.3, 0.78, 0);
+          la.rotation.z = 0.32;
+          ra.rotation.z = -0.32;
+          g.add(la, ra);
+          const ll = new THREE.Mesh(legGeo, mat(0x101827)),
+            rl = new THREE.Mesh(legGeo, mat(0x101827));
+          ll.position.set(-0.13, 0.04, 0);
+          rl.position.set(0.13, 0.04, 0);
+          g.add(ll, rl);
+          g.userData.lArm = la;
+          g.userData.rArm = ra;
+          g.scale.setScalar(opts.scale || 1);
+          return g;
+        }
+        function makeLaptop() {
+          const g = new THREE.Group();
+          const base = new THREE.Mesh(
+            new THREE.BoxGeometry(0.72, 0.07, 0.5),
+            mat(0x18263a, 0.45, 0.5),
+          );
+          g.add(base);
+          const lid = new THREE.Mesh(
+            new THREE.BoxGeometry(0.72, 0.035, 0.5),
+            mat(0x233b5a, 0.45, 0.5),
+          );
+          lid.position.y = 0.065;
+          g.add(lid);
+          const qr = planeTexture(qrTexture(21), 0.2, 0.2);
+          qr.rotation.x = -Math.PI / 2;
+          qr.position.y = 0.09;
+          g.add(qr);
+          return g;
+        }
+        function chartTexture() {
+          return canvasTex(
+            function (x, w, h) {
+              x.fillStyle = "#f6f4ee";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#16324a";
+              x.font = "700 24px Arial";
+              x.fillText("Monitoring Dashboard", 30, 42);
+              x.fillStyle = "#1d9e5e";
+              x.font = "700 30px Arial";
+              x.fillText("1,420 assets", 30, 84);
+              x.fillStyle = "#5b6b7c";
+              x.font = "16px Arial";
+              x.fillText("Real-time status", 30, 110);
+              x.strokeStyle = "rgba(22,50,74,.12)";
+              x.lineWidth = 1;
+              for (let i = 0; i < 4; i++) {
+                const y = 150 + i * 52;
+                x.beginPath();
+                x.moveTo(34, y);
+                x.lineTo(w - 30, y);
+                x.stroke();
+              }
+              const pts = [22, 46, 34, 70, 55, 84, 62, 92];
+              x.strokeStyle = "#1d9e5e";
+              x.lineWidth = 5;
+              x.lineJoin = "round";
+              x.beginPath();
+              pts.forEach(function (v, i) {
+                const px = 45 + (i * (w - 85)) / (pts.length - 1),
+                  py = 340 - v * 1.65;
+                if (i === 0) x.moveTo(px, py);
+                else x.lineTo(px, py);
+              });
+              x.stroke();
+              x.fillStyle = "#5b6b7c";
+              x.font = "14px Arial";
+              x.fillText("Asset utilization / value trend", 34, 385);
+              x.fillStyle = "#8a97a3";
+              x.fillText("sample data", w - 130, 385);
+            },
+            640,
+            420,
+          );
+        }
+        function depreciationTexture() {
+          return canvasTex(
+            function (x, w, h) {
+              x.fillStyle = "#fbfaf7";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#16324a";
+              x.font = "700 36px Arial";
+              x.fillText("Informasi Finansial & Depresiasi", 36, 54);
+              x.fillStyle = "#8a97a3";
+              x.font = "18px Arial";
+              x.textAlign = "right";
+              x.fillText("sample data", 988, 50);
+              x.textAlign = "left";
+              x.fillStyle = "#7c3aed";
+              rrA(x, 28, 78, 478, 160, 18);
+              x.fill();
+              x.fillStyle = "#d9ccff";
+              x.font = "20px Arial";
+              x.fillText("NILAI BUKU SAAT INI", 56, 114);
+              x.fillStyle = "#ffffff";
+              x.font = "700 68px Arial";
+              x.fillText("Rp 5.000.000", 52, 182);
+              x.fillStyle = "#d9ccff";
+              x.font = "18px Arial";
+              x.fillText("Tersisa 3 dari 3 tahun", 56, 216);
+              const cards = [
+                ["Metode", "Garis Lurus"],
+                ["Harga Perolehan", "Rp 15.000.000"],
+                ["Nilai Sisa", "Rp 100.000"],
+                ["Umur Ekonomis", "3 Tahun"],
+                ["Dep. per Tahun", "Rp 4.966.667"],
+                ["Tahun Perolehan", "2026"],
+              ];
+              cards.forEach(function (c, i) {
+                const col = i % 2,
+                  row = Math.floor(i / 2),
+                  px = 28 + col * 253,
+                  py = 252 + row * 104;
+                x.fillStyle = "#ffffff";
+                rrA(x, px, py, 241, 92, 12);
+                x.fill();
+                x.strokeStyle = "#e2e9f5";
+                x.lineWidth = 1.5;
+                rrA(x, px, py, 241, 92, 12);
+                x.stroke();
+                x.fillStyle = "#7a8aa0";
+                x.font = "18px Arial";
+                x.fillText(c[0], px + 16, py + 34);
+                x.fillStyle = "#132033";
+                x.font = "700 28px Arial";
+                x.fillText(c[1], px + 16, py + 68);
+              });
+              x.fillStyle = "#16324a";
+              x.font = "700 30px Arial";
+              x.fillText("Proyeksi Depresiasi", 560, 110);
+              const vals = [15000000, 10033333, 5066667, 100000];
+              const yrs = ["2026", "2027", "2028", "2029"];
+              function vy(v) {
+                return 300 - (v / 15000000) * 150;
+              }
+              x.strokeStyle = "rgba(22,50,74,.12)";
+              x.lineWidth = 1;
+              [150, 200, 250, 300].forEach(function (gy) {
+                x.beginPath();
+                x.moveTo(600, gy);
+                x.lineTo(980, gy);
+                x.stroke();
+              });
+              x.fillStyle = "#7a8aa0";
+              x.font = "16px Arial";
+              x.textAlign = "right";
+              x.fillText("15 jt", 592, 154);
+              x.fillText("10 jt", 592, 204);
+              x.fillText("5 jt", 592, 254);
+              x.fillText("0", 592, 304);
+              x.textAlign = "left";
+              x.strokeStyle = "#2f6fe4";
+              x.lineWidth = 6;
+              x.lineJoin = "round";
+              x.beginPath();
+              vals.forEach(function (v, i) {
+                const qx = 620 + i * 115,
+                  qy = vy(v);
+                if (i === 0) x.moveTo(qx, qy);
+                else x.lineTo(qx, qy);
+              });
+              x.stroke();
+              x.fillStyle = "#2f6fe4";
+              vals.forEach(function (v, i) {
+                const qx = 620 + i * 115,
+                  qy = vy(v);
+                x.beginPath();
+                x.arc(qx, qy, 6, 0, 6.2832);
+                x.fill();
+              });
+              x.fillStyle = "#7a8aa0";
+              x.font = "16px Arial";
+              yrs.forEach(function (t, i) {
+                x.fillText(t, 606 + i * 115, 328);
+              });
+              x.fillStyle = "#16324a";
+              x.font = "700 22px Arial";
+              x.fillText("Depresiasi per Tahun", 560, 372);
+              x.fillStyle = "#7a8aa0";
+              x.font = "18px Arial";
+              x.fillText("TAHUN", 560, 402);
+              x.fillText("DEPRESIASI", 690, 402);
+              x.fillText("NILAI BUKU", 850, 402);
+              const rows = [
+                ["2026", "Rp 4.966.667", "Rp 10.033.333"],
+                ["2027", "Rp 4.966.667", "Rp 5.066.667"],
+                ["2028", "Rp 4.966.667", "Rp 100.000"],
+              ];
+              rows.forEach(function (r, i) {
+                const ry = 434 + i * 40;
+                if (i === 2) {
+                  x.fillStyle = "#efe9fb";
+                  x.fillRect(548, ry - 26, 440, 36);
+                }
+                x.fillStyle = "#132033";
+                x.font = "26px Arial";
+                x.fillText(r[0], 560, ry);
+                x.fillText(r[1], 690, ry);
+                x.fillText(r[2], 850, ry);
+              });
+            },
+            1024,
+            576,
+          );
+        }
+        function auditTexture() {
+          return canvasTex(
+            function (x, w, h) {
+              x.fillStyle = "#fbfaf7";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#16324a";
+              x.font = "700 36px Arial";
+              x.fillText("Audit Trail", 36, 54);
+              x.fillStyle = "#8a97a3";
+              x.font = "16px Arial";
+              x.textAlign = "right";
+              x.fillText("sample data", 988, 50);
+              x.textAlign = "left";
+              x.strokeStyle = "rgba(29,158,94,.45)";
+              x.lineWidth = 3;
+              x.beginPath();
+              x.moveTo(70, 100);
+              x.lineTo(70, 470);
+              x.stroke();
+              const rows = [
+                ["09:12", "Asset created", "Admin - AST-0021"],
+                ["10:30", "Assigned to user", "Rizal - IT Dept"],
+                ["13:20", "Borrowed", "Project - Internal"],
+                ["16:45", "Returned", "Good condition"],
+                ["09:00", "Maintenance", "Routine check"],
+                ["11:18", "Status updated", "Admin - verified"],
+              ];
+              rows.forEach(function (r, i) {
+                const y = 100 + i * 72;
+                x.fillStyle = "#1d9e5e";
+                x.beginPath();
+                x.arc(70, y, 7, 0, TAU);
+                x.fill();
+                x.fillStyle = "#5b6b7c";
+                x.font = "17px Arial";
+                x.fillText(r[0], 92, y + 1);
+                x.fillStyle = "#132033";
+                x.font = "700 19px Arial";
+                x.fillText(r[1], 170, y + 1);
+                x.fillStyle = "#7a8aa0";
+                x.font = "15px Arial";
+                x.fillText(r[2], 170, y + 23);
+              });
+              x.fillStyle = "#ffffff";
+              rrA(x, 420, 90, 568, 150, 14);
+              x.fill();
+              x.strokeStyle = "#e2e9f5";
+              x.lineWidth = 1.5;
+              rrA(x, 420, 90, 568, 150, 14);
+              x.stroke();
+              x.fillStyle = "#16324a";
+              x.font = "700 22px Arial";
+              x.fillText("LENOVO THINKPAD - AST-0021", 448, 128);
+              x.fillStyle = "#5b6b7c";
+              x.font = "16px Arial";
+              x.fillText("Category   Laptop", 448, 160);
+              x.fillText("Location   IT Office", 448, 184);
+              x.fillStyle = "#1d9e5e";
+              x.font = "700 16px Arial";
+              x.fillText("Status   Active", 448, 208);
+              x.fillStyle = "#5b6b7c";
+              x.font = "16px Arial";
+              x.fillText("Last audit   02 Oct 2026", 700, 208);
+              x.fillStyle = "#ffffff";
+              rrA(x, 420, 250, 520, 200, 14);
+              x.fill();
+              x.strokeStyle = "#e2e9f5";
+              x.lineWidth = 1.5;
+              rrA(x, 420, 250, 520, 200, 14);
+              x.stroke();
+              x.fillStyle = "#16324a";
+              x.font = "700 20px Arial";
+              x.fillText("AUDIT STATUS", 448, 278);
+              x.fillStyle = "#132033";
+              x.font = "700 30px Arial";
+              x.fillText("1,280 / 1,420", 448, 316);
+              x.fillStyle = "#e2e9f5";
+              x.fillRect(448, 330, 464, 10);
+              x.fillStyle = "#1d9e5e";
+              x.fillRect(448, 330, 418, 10);
+              const st = [
+                ["#1d9e5e", "Verified", "1,231"],
+                ["#e0a53c", "Review", "38"],
+                ["#d9534f", "Missing", "11"],
+                ["#2f6fe4", "Maint.", "0"],
+              ];
+              st.forEach(function (s, i) {
+                const sy = 368 + i * 22;
+                x.fillStyle = s[0];
+                x.beginPath();
+                x.arc(456, sy - 5, 6, 0, TAU);
+                x.fill();
+                x.fillStyle = "#3a4a5c";
+                x.font = "16px Arial";
+                x.fillText(s[1], 470, sy);
+                x.fillStyle = "#132033";
+                x.textAlign = "right";
+                x.fillText(s[2], 910, sy);
+                x.textAlign = "left";
+              });
+            },
+            1024,
+            600,
+          );
+        }
+        function auditTabTex() {
+          return canvasTex(
+            function (x, w, h) {
+              x.fillStyle = "#17251f";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#eaf1f7";
+              x.font = "700 18px Arial";
+              x.fillText("SCAN ASSET", 12, 26);
+              drawQR(x, 24, 40, 80, 51);
+              x.fillStyle = "#8fa3b7";
+              x.font = "13px Arial";
+              x.fillText("AST-0021", 12, 146);
+            },
+            128,
+            160,
+          );
+        }
+        function reportTexture() {
+          return canvasTex(
+            function (x, w, h) {
+              x.fillStyle = "#ffffff";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#16324a";
+              x.font = "700 20px Arial";
+              x.fillText("ASSET AUDIT REPORT", 16, 30);
+              x.fillStyle = "#5b6b7c";
+              x.font = "14px Arial";
+              const rows = [
+                ["Asset ID", "AST-0021"],
+                ["Asset", "Lenovo ThinkPad"],
+                ["Assigned To", "Rizal"],
+                ["Location", "IT Office"],
+              ];
+              rows.forEach(function (r, i) {
+                const ry = 62 + i * 30;
+                x.fillText(r[0], 16, ry);
+                x.fillStyle = "#132033";
+                x.fillText(r[1], 120, ry);
+                x.fillStyle = "#5b6b7c";
+              });
+              x.strokeStyle = "#e2e9f5";
+              x.lineWidth = 1;
+              x.beginPath();
+              x.moveTo(16, 190);
+              x.lineTo(w - 16, 190);
+              x.stroke();
+              x.fillStyle = "#16324a";
+              x.font = "700 16px Arial";
+              x.fillText("STATUS", 16, 214);
+              x.fillStyle = "#1d9e5e";
+              x.font = "15px Arial";
+              ["Asset verified", "Location verified", "User verified"].forEach(
+                function (s, i) {
+                  x.fillText("✓ " + s, 16, 240 + i * 26);
+                },
+              );
+              x.fillStyle = "#5b6b7c";
+              x.font = "14px Arial";
+              x.fillText("Last Audit", 16, 330);
+              x.fillStyle = "#132033";
+              x.fillText("02 Oct 2026", 120, 330);
+            },
+            256,
+            352,
+          );
+        }
+        function makeAFrameLadder() {
+          const g = new THREE.Group(),
+            alu = M(0xb9c2c9, 0.35, 0.75),
+            dark = M(0x2a2f38, 0.5),
+            accent = M(0xd97a2b, 0.5);
+          const front = new THREE.Group(),
+            rear = new THREE.Group();
+          g.add(front, rear);
+          function rail(a, b, parent) {
+            const mid = a.clone().add(b).multiplyScalar(0.5),
+              len = a.distanceTo(b),
+              m = new THREE.Mesh(new THREE.BoxGeometry(0.07, len, 0.045), alu);
+            m.position.copy(mid);
+            m.quaternion.setFromUnitVectors(
+              new THREE.Vector3(0, 1, 0),
+              b.clone().sub(a).normalize(),
+            );
+            parent.add(m);
+          }
+          const H = 1.85;
+          const fx = (y) => 0.38 - 0.24 * (y / H);
+          const fz = (y) => 0.42 - 0.36 * (y / H);
+          const rx = (y) => 0.42 - 0.28 * (y / 1.8);
+          const rz = (y) => -0.42 + 0.36 * (y / 1.8);
+          for (const sx of [-1, 1]) {
+            rail(
+              new THREE.Vector3(sx * 0.38, 0.07, 0.42),
+              new THREE.Vector3(sx * 0.14, H, 0.06),
+              front,
+            );
+            rail(
+              new THREE.Vector3(sx * 0.42, 0.07, -0.42),
+              new THREE.Vector3(sx * 0.14, 1.8, -0.06),
+              rear,
+            );
+            const footF = new THREE.Mesh(
+              new THREE.BoxGeometry(0.12, 0.06, 0.12),
+              dark,
+            );
+            footF.position.set(sx * 0.38, 0.03, 0.42);
+            front.add(footF);
+            const footR = new THREE.Mesh(
+              new THREE.BoxGeometry(0.12, 0.06, 0.12),
+              dark,
+            );
+            footR.position.set(sx * 0.42, 0.03, -0.42);
+            rear.add(footR);
+          }
+          for (let i = 0; i < 5; i++) {
+            const y = 0.32 + i * 0.32;
+            const step = new THREE.Mesh(
+              new THREE.BoxGeometry(fx(y) * 2 + 0.04, 0.05, 0.16),
+              alu,
+            );
+            step.position.set(0, y, fz(y));
+            front.add(step);
+          }
+          for (const y of [0.75, 1.3]) {
+            const brace = new THREE.Mesh(
+              new THREE.BoxGeometry(rx(y) * 2, 0.05, 0.05),
+              alu,
+            );
+            brace.position.set(0, y, rz(y));
+            rear.add(brace);
+          }
+          for (const sx of [-1, 1]) {
+            const hinge = new THREE.Mesh(
+              new THREE.BoxGeometry(0.05, 0.2, 0.14),
+              dark,
+            );
+            hinge.position.set(sx * 0.14, 1.78, 0);
+            g.add(hinge);
+            const sticker = new THREE.Mesh(
+              new THREE.BoxGeometry(0.02, 0.14, 0.05),
+              accent,
+            );
+            sticker.position.set(sx * (fx(1.55) + 0.045), 1.55, fz(1.55));
+            front.add(sticker);
+          }
+          const cap = new THREE.Mesh(
+            new THREE.BoxGeometry(0.36, 0.06, 0.34),
+            alu,
+          );
+          cap.position.set(0, H + 0.03, 0);
+          g.add(cap);
+          return g;
+        }
+        function makeReservedPanel(title) {
+          const tex = canvasTex(
+            (x, w, h) => {
+              x.fillStyle = "#101d2b";
+              x.fillRect(0, 0, w, h);
+              x.strokeStyle = "rgba(46,194,122,.5)";
+              x.lineWidth = 3;
+              x.setLineDash([14, 10]);
+              x.strokeRect(14, 14, w - 28, h - 28);
+              x.fillStyle = "#eaf1f7";
+              x.font = "700 30px Arial";
+              x.fillText(title, 40, 80);
+              x.fillStyle = "#8fa3b7";
+              x.font = "18px Arial";
+              x.fillText("Reserved area", 40, 116);
+            },
+            480,
+            160,
+          );
+          return planeTexture(tex, 2.6, 0.87, true);
+        }
+        /* Reusable floating application screen */
+        function createFloatingScreen(w, h, drawFn) {
+          const c = document.createElement("canvas");
+          c.width = 512;
+          c.height = 880;
+          const tex = new THREE.CanvasTexture(c);
+          tex.encoding = THREE.sRGBEncoding;
+          tex.anisotropy = 4;
+          drawFn(c.getContext("2d"), 512, 880);
+          const g = new THREE.Group();
+          const glow = new THREE.Mesh(
+            new THREE.PlaneGeometry(w + 0.22, h + 0.22),
+            new THREE.MeshBasicMaterial({
+              color: 0x2ec27a,
+              transparent: true,
+              opacity: 0.0,
+              blending: THREE.AdditiveBlending,
+              depthWrite: false,
+              side: THREE.DoubleSide,
+            }),
+          );
+          glow.position.z = -0.012;
+          g.add(glow);
+          const panel = new THREE.Mesh(
+            new THREE.PlaneGeometry(w, h),
+            new THREE.MeshBasicMaterial({
+              map: tex,
+              transparent: true,
+              opacity: 0,
+              side: THREE.FrontSide,
+            }),
+          );
+          g.add(panel);
+          return {
+            group: g,
+            tex: tex,
+            canvas: c,
+            redraw: function () {
+              drawFn(c.getContext("2d"), 512, 880);
+              tex.needsUpdate = true;
+            },
+            setOpacity: function (o) {
+              panel.material.opacity = o;
+              glow.material.opacity = o * 0.1;
+              g.visible = o > 0.02;
+            },
+          };
+        }
+        function showFloatingScreen(s) {
+          s.group.visible = true;
+        }
+        function hideFloatingScreen(s) {
+          s.group.visible = false;
+        }
+        function updateFloatingScreen(s, o) {
+          s.setOpacity(o);
+        }
+        function rrA(x, px, py, pw, ph, r) {
+          x.beginPath();
+          x.moveTo(px + r, py);
+          x.arcTo(px + pw, py, px + pw, py + ph, r);
+          x.arcTo(px + pw, py + ph, px, py + ph, r);
+          x.arcTo(px, py + ph, px, py, r);
+          x.arcTo(px, py, px + pw, py, r);
+          x.closePath();
+        }
+        function drawDetailAsset(x, w, h) {
+          var g = x.createLinearGradient(0, 0, 0, h);
+          g.addColorStop(0, "#ffffff");
+          g.addColorStop(0.55, "#f6f9ff");
+          g.addColorStop(1, "#e6eefe");
+          x.fillStyle = g;
+          x.fillRect(0, 0, w, h);
+          x.fillStyle = "#ffffff";
+          x.fillRect(0, 0, w, 78);
+          x.fillStyle = "#7c3aed";
+          x.beginPath();
+          x.arc(46, 39, 20, 0, 6.2832);
+          x.fill();
+          x.fillStyle = "#ffffff";
+          x.font = "700 22px Arial";
+          x.fillText("<", 38, 47);
+          x.fillStyle = "#2f4bff";
+          x.font = "700 27px Arial";
+          x.fillText("Detail Aset", 78, 48);
+          x.fillStyle = "#0f172a";
+          x.font = "800 38px Arial";
+          x.fillText("Proyektor", 28, 120);
+          x.fillStyle = "#dbeafe";
+          rrA(x, 28, 130, 130, 30, 15);
+          x.fill();
+          x.fillStyle = "#2563eb";
+          x.font = "700 17px Arial";
+          x.fillText("Perawatan", 47, 151);
+          x.fillStyle = "#0f172a";
+          x.font = "800 21px Arial";
+          x.fillText("Informasi Aset", 28, 194);
+          var rows = [
+            ["TANGGAL PEMBELIAN", "11/09/2026"],
+            ["HARGA", "Rp 2.000.000"],
+            ["LOKASI", "Gedung Lantai 1"],
+            ["SERIAL NUMBER", "sn81929"],
+            ["JADWAL MAINTENANCE", "14/09/2026"],
+            ["EKSPEKTASI UMUR ASET", "5 tahun"],
+            ["KATEGORI DETAIL", "IT & Komputer"],
+            ["NILAI SAAT INI", "Rp 1.650.000"],
+          ];
+          var cw = (w - 56 - 12) / 2,
+            ch = 62,
+            sy = 206;
+          rows.forEach(function (r, i) {
+            var col = i % 2,
+              row = Math.floor(i / 2),
+              px = 28 + col * (cw + 12),
+              py = sy + row * (ch + 8);
+            x.fillStyle = "#ffffff";
+            rrA(x, px, py, cw, ch, 12);
+            x.fill();
+            x.strokeStyle = "#e2e9f5";
+            x.lineWidth = 1.5;
+            rrA(x, px, py, cw, ch, 12);
+            x.stroke();
+            x.fillStyle = "#7c3aed";
+            x.font = "700 13px Arial";
+            x.fillText("◈", px + 10, py + 20);
+            x.fillStyle = "#7a8aa0";
+            x.font = "700 10.5px Arial";
+            x.fillText(r[0], px + 28, py + 20);
+            x.fillStyle = "#132033";
+            x.font = "700 14px Arial";
+            x.fillText(String(r[1]).substring(0, 18), px + 10, py + 43);
+          });
+          var ky = sy + 4 * (ch + 8) + 10;
+          x.fillStyle = "#ffffff";
+          rrA(x, 28, ky, w - 56, 58, 12);
+          x.fill();
+          x.strokeStyle = "#e2e9f5";
+          x.lineWidth = 1.5;
+          rrA(x, 28, ky, w - 56, 58, 12);
+          x.stroke();
+          x.fillStyle = "#7c3aed";
+          x.font = "700 13px Arial";
+          x.fillText("◈", 38, ky + 20);
+          x.fillStyle = "#7a8aa0";
+          x.font = "700 10.5px Arial";
+          x.fillText("KETERANGAN", 56, ky + 20);
+          x.fillStyle = "#132033";
+          x.font = "400 13.5px Arial";
+          x.fillText("Proyektor ruang meeting barat", 38, ky + 42);
+          var ty = ky + 82;
+          x.fillStyle = "#7a8aa0";
+          x.font = "400 13px Arial";
+          x.fillText("Asset Tag", 28, ty);
+          x.fillStyle = "#6d28d9";
+          x.font = "800 26px Arial";
+          x.fillText("AST-93", 28, ty + 30);
+          var qs = 132,
+            qx = (w - qs) / 2,
+            qy = ty + 44;
+          x.fillStyle = "#ffffff";
+          x.fillRect(qx - 12, qy - 10, qs + 24, qs + 34);
+          drawQR(x, qx, qy, qs, 93);
+          x.fillStyle = "#5b6b7c";
+          x.font = "400 12.5px Arial";
+          x.fillText("Pindai untuk verifikasi", qx - 18, qy + qs + 12);
+          var by = qy + qs + 30;
+          x.strokeStyle = "#2563eb";
+          x.lineWidth = 2.5;
+          rrA(x, 28, by, 316, 46, 12);
+          x.stroke();
+          x.fillStyle = "#2563eb";
+          x.font = "800 17px Arial";
+          x.fillText("Edit Aset", 138, by + 30);
+          x.fillStyle = "#7c3aed";
+          rrA(x, 356, by, 128, 46, 12);
+          x.fill();
+          x.fillStyle = "#ffffff";
+          x.font = "700 17px Arial";
+          x.fillText("Hapus", 390, by + 30);
+        }
+        /* Reusable device screen with states idle / scanning / borrow-form */
+        function createDeviceScreen() {
+          const c = document.createElement("canvas");
+          c.width = 256;
+          c.height = 340;
+          const tex = new THREE.CanvasTexture(c);
+          tex.encoding = THREE.sRGBEncoding;
+          const g = new THREE.Group();
+          const body = new THREE.Mesh(
+            new THREE.BoxGeometry(0.32, 0.44, 0.025),
+            mat(0x0d1724, 0.35),
+          );
+          g.add(body);
+          const screen = planeTexture(tex, 0.3, 0.4, true);
+          screen.position.z = 0.014;
+          g.add(screen);
+          const scan = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.22, 0.012),
+            new THREE.MeshBasicMaterial({
+              color: 0x3fdc8a,
+              transparent: true,
+              opacity: 0.9,
+            }),
+          );
+          scan.position.set(0, 0.02, 0.016);
+          scan.visible = false;
+          g.add(scan);
+          let state = "idle";
+          function paint() {
+            const x = c.getContext("2d");
+            if (state === "borrow-form") {
+              x.fillStyle = "#f4f7f5";
+              x.fillRect(0, 0, 256, 340);
+              x.fillStyle = "#0b1b2b";
+              x.font = "700 20px Arial";
+              x.fillText("Pinjam Aset", 20, 34);
+              x.fillStyle = "#5b6b7c";
+              x.font = "13px Arial";
+              x.fillText("Asset", 20, 66);
+              x.fillStyle = "#0b1b2b";
+              x.font = "700 16px Arial";
+              x.fillText("Lenovo ThinkPad", 20, 88);
+              x.fillStyle = "#5b6b7c";
+              x.font = "13px Arial";
+              x.fillText("Asset ID", 20, 118);
+              x.fillStyle = "#0b1b2b";
+              x.fillText("AST-001", 20, 138);
+              x.fillText("Peminjam", 20, 168);
+              x.fillStyle = "#0b1b2b";
+              x.fillText("Rizal", 20, 188);
+              x.fillStyle = "#5b6b7c";
+              x.fillText("Tanggal", 20, 218);
+              x.fillStyle = "#0b1b2b";
+              x.fillText("27/09/2026", 20, 238);
+              x.fillStyle = "#2ec27a";
+              x.fillRect(20, 262, 216, 44);
+              x.fillStyle = "#fff";
+              x.font = "700 16px Arial";
+              x.fillText("Ajukan Peminjaman", 42, 290);
+            } else {
+              x.fillStyle = "#17251f";
+              x.fillRect(0, 0, 256, 340);
+              x.fillStyle = "#3fdc8a";
+              x.font = "700 20px Arial";
+              x.fillText(state === "scanning" ? "SCAN" : "Scan Asset", 22, 34);
+              x.strokeStyle = "#3fdc8a";
+              x.lineWidth = 5;
+              x.strokeRect(25, 58, 206, 180);
+              drawQR(x, 48, 80, 160, state === "scanning" ? 31 : 7);
+              x.fillStyle = "#d8e8df";
+              x.font = "16px Arial";
+              x.fillText(
+                state === "scanning" ? "Scanning..." : "Arahkan ke QR aset",
+                22,
+                296,
+              );
+            }
+            tex.needsUpdate = true;
+            scan.visible = state === "scanning";
+          }
+          paint();
+          return {
+            group: g,
+            scanLine: scan,
+            setState: function (s) {
+              if (s !== state) {
+                state = s;
+                paint();
+              }
+            },
+            getState: function () {
+              return state;
+            },
+          };
+        }
+        function setDeviceScreenState(d, s) {
+          d.setState(s);
+        }
+        const canvas = document.getElementById("gl");
+        const renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          antialias: true,
+        });
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.7));
+        const vw = function () {
+            return document.documentElement.clientWidth || innerWidth;
+          },
+          vh = function () {
+            return document.documentElement.clientHeight || innerHeight;
+          };
+        renderer.setSize(vw(), vh(), true);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.1;
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x142233);
+        scene.fog = new THREE.FogExp2(0x142233, 0.01);
+        const camera = new THREE.PerspectiveCamera(48, vw() / vh(), 0.1, 220);
+        scene.add(camera);
+        scene.add(new THREE.HemisphereLight(0xfff6e6, 0x1a2a3a, 1.0));
+        const key = new THREE.DirectionalLight(0xfff4df, 1.05);
+        key.position.set(6, 14, 8);
+        key.castShadow = true;
+        key.shadow.mapSize.set(1024, 1024);
+        key.shadow.camera.left = -17;
+        key.shadow.camera.right = 17;
+        key.shadow.camera.top = 17;
+        key.shadow.camera.bottom = -17;
+        key.shadow.camera.near = 1;
+        key.shadow.camera.far = 40;
+        key.shadow.bias = -0.0004;
+        scene.add(key);
+        const fillL = new THREE.DirectionalLight(0x7aa7ff, 0.3);
+        fillL.position.set(-10, 7, -6);
+        scene.add(fillL);
+        const backL = new THREE.DirectionalLight(0xffe9c4, 0.25);
+        backL.position.set(-4, 10, 10);
+        scene.add(backL);
+        const room = new THREE.Group();
+        scene.add(room);
+        const GEO_BOX = new THREE.BoxGeometry(1, 1, 1);
+        const MATC = {};
+        function M(c, r, mt) {
+          const k = c + "_" + (r || 0.8) + "_" + (mt || 0);
+          if (!MATC[k])
+            MATC[k] = new THREE.MeshStandardMaterial({
+              color: c,
+              roughness: r === undefined ? 0.8 : r,
+              metalness: mt === undefined ? 0 : mt,
+            });
+          return MATC[k];
+        }
+        function box(w, h, d, c, x, y, z, ry, r) {
+          const m = new THREE.Mesh(GEO_BOX, M(c, r));
+          m.scale.set(w, h, d);
+          m.position.set(x, y, z);
+          m.rotation.y = ry || 0;
+          room.add(m);
+          return m;
+        }
+        function cyl(rt, rb, h, c, x, y, z, seg) {
+          const m = new THREE.Mesh(
+            new THREE.CylinderGeometry(rt, rb, h, seg || 12),
+            M(c, 0.85),
+          );
+          m.position.set(x, y, z);
+          room.add(m);
+          return m;
+        }
+        /* Floor with subtle tile pattern, room 30 x 24 centered on origin */
+        const floorTex = canvasTex(
+          function (x, w, h) {
+            x.fillStyle = "#b99c6e";
+            x.fillRect(0, 0, w, h);
+            x.strokeStyle = "rgba(80,55,25,.20)";
+            x.lineWidth = 2;
+            const n = 4,
+              s = w / n;
+            for (let i = 0; i <= n; i++) {
+              x.beginPath();
+              x.moveTo(i * s, 0);
+              x.lineTo(i * s, h);
+              x.stroke();
+              x.beginPath();
+              x.moveTo(0, i * s);
+              x.lineTo(w, i * s);
+              x.stroke();
+            }
+            x.fillStyle = "rgba(255,255,255,.03)";
+            x.fillRect(0, 0, w, h / 2);
+          },
+          512,
+          512,
+        );
+        floorTex.wrapS = floorTex.wrapT = THREE.RepeatWrapping;
+        floorTex.repeat.set(7, 6);
+        const floorMat = new THREE.MeshStandardMaterial({
+          map: floorTex,
+          roughness: 0.9,
+        });
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 24), floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.set(0, 0, 0);
+        room.add(floor);
+        function wall(w, h, x, y, z, ry, c) {
+          const m = new THREE.Mesh(
+            new THREE.PlaneGeometry(w, h),
+            new THREE.MeshStandardMaterial({
+              color: c || 0x8a7358,
+              roughness: 0.92,
+            }),
+          );
+          m.position.set(x, y, z);
+          m.rotation.y = ry;
+          m.userData.noCast = true;
+          room.add(m);
+          return m;
+        }
+        wall(30, 4, 0, 2, -12, 0);
+        wall(30, 4, 0, 2, 12, Math.PI);
+        wall(24, 4, 15, 2, 0, -Math.PI / 2);
+        wall(24, 4, -15, 2, 0, Math.PI / 2);
+        box(30, 0.14, 0.08, 0x3a2c1c, 0, 0.07, -11.94, 0);
+        box(30, 0.14, 0.08, 0x3a2c1c, 0, 0.07, 11.94, 0);
+        box(0.08, 0.14, 24, 0x3a2c1c, 14.94, 0.07, 0, 0);
+        box(0.08, 0.14, 24, 0x3a2c1c, -14.94, 0.07, 0, 0);
+        for (const px of [-9, -3, 3, 9]) {
+          box(3.4, 1.6, 0.06, 0x7d6547, px, 2.1, -11.93, 0);
+          box(3.4, 1.6, 0.06, 0x7d6547, px, 2.1, 11.93, 0);
+        }
+        const ceil = new THREE.Mesh(
+          new THREE.PlaneGeometry(30, 24),
+          new THREE.MeshStandardMaterial({
+            color: 0xe6dcc8,
+            roughness: 0.95,
+            side: THREE.DoubleSide,
+          }),
+        );
+        ceil.rotation.x = Math.PI / 2;
+        ceil.position.set(0, 4, 0);
+        ceil.userData.noCast = true;
+        room.add(ceil);
+        for (const lx of [-9, 0, 9])
+          for (const lz of [-6, 6]) {
+            const lamp = new THREE.Mesh(
+              new THREE.BoxGeometry(4.4, 0.07, 0.5),
+              new THREE.MeshBasicMaterial({ color: 0xfff6e2 }),
+            );
+            lamp.position.set(lx, 3.93, lz);
+            room.add(lamp);
+          }
+        /* Office props: desks north, cabinets south, whiteboard west, plants */
+        function desk(x, z, ry, withMon, withChair) {
+          const g = new THREE.Group();
+          g.position.set(x, 0, z);
+          g.rotation.y = ry || 0;
+          room.add(g);
+          function p(m) {
+            g.add(m);
+            return m;
+          }
+          const top = new THREE.Mesh(GEO_BOX, M(0x8a6538, 0.6));
+          top.scale.set(2.2, 0.08, 0.95);
+          top.position.y = 0.74;
+          p(top);
+          for (const sx of [-1, 1])
+            for (const sz of [-0.4, 0.4]) {
+              const leg = new THREE.Mesh(GEO_BOX, M(0x4e351f));
+              leg.scale.set(0.07, 0.74, 0.07);
+              leg.position.set(sx, 0.37, sz);
+              p(leg);
+            }
+          if (withMon) {
+            const st = new THREE.Mesh(GEO_BOX, M(0x2a2f38));
+            st.scale.set(0.08, 0.3, 0.08);
+            st.position.set(0, 0.93, -0.15);
+            p(st);
+            const mon = new THREE.Mesh(
+              new THREE.BoxGeometry(0.95, 0.55, 0.06),
+              M(0x1c2733, 0.5),
+            );
+            mon.position.set(0, 1.25, -0.15);
+            p(mon);
+            const scr = new THREE.Mesh(
+              new THREE.PlaneGeometry(0.85, 0.45),
+              new THREE.MeshBasicMaterial({ color: 0x9fc4e8 }),
+            );
+            scr.position.set(0, 1.25, -0.115);
+            p(scr);
+            const kb = new THREE.Mesh(GEO_BOX, M(0xd8dee6, 0.6));
+            kb.scale.set(0.45, 0.025, 0.15);
+            kb.position.set(0, 0.795, 0.22);
+            p(kb);
+            const kbStrip = new THREE.Mesh(GEO_BOX, M(0x2a2f38, 0.6));
+            kbStrip.scale.set(0.4, 0.008, 0.1);
+            kbStrip.position.set(0, 0.81, 0.22);
+            p(kbStrip);
+          }
+          if (withChair !== false) {
+            const seat = new THREE.Mesh(GEO_BOX, M(0x2c3a4d));
+            seat.scale.set(0.5, 0.07, 0.5);
+            seat.position.set(0, 0.48, 0.95);
+            p(seat);
+            const back = new THREE.Mesh(GEO_BOX, M(0x2c3a4d));
+            back.scale.set(0.5, 0.55, 0.07);
+            back.position.set(0, 0.85, 1.18);
+            p(back);
+            const post = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.035, 0.035, 0.44, 10),
+              M(0x445060, 0.4, 0.6),
+            );
+            post.position.set(0, 0.26, 0.95);
+            p(post);
+            const hub = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.06, 0.06, 0.08, 10),
+              M(0x2a2f38, 0.5),
+            );
+            hub.position.set(0, 0.07, 0.95);
+            p(hub);
+            const wheelGeo = new THREE.SphereGeometry(0.04, 8, 6);
+            for (let k = 0; k < 5; k++) {
+              const a = (k * TAU) / 5;
+              const spoke = new THREE.Mesh(GEO_BOX, M(0x445060, 0.4, 0.6));
+              spoke.scale.set(0.3, 0.04, 0.05);
+              spoke.position.set(
+                Math.cos(a) * 0.16,
+                0.05,
+                0.95 + Math.sin(a) * 0.16,
+              );
+              spoke.rotation.y = -a;
+              p(spoke);
+              const wh = new THREE.Mesh(wheelGeo, M(0x11151c, 0.6));
+              wh.position.set(
+                Math.cos(a) * 0.3,
+                0.04,
+                0.95 + Math.sin(a) * 0.3,
+              );
+              p(wh);
+            }
+          }
+          return g;
+        }
+        desk(-5, -10.2, 0, true);
+        desk(-1, -10.2, 0, true);
+        desk(3, -10.2, 0, false);
+        desk(7, -10.2, 0, true);
+        for (const cx of [-5, -1, 3, 7]) {
+          box(1.6, 1.9, 0.55, 0x5c6a78, cx, 0.95, 11.4, 0);
+        }
+        const wbTex = canvasTex(
+          function (x, w, h) {
+            x.fillStyle = "#eef2f5";
+            x.fillRect(0, 0, w, h);
+            x.strokeStyle = "#9fb2c5";
+            x.lineWidth = 3;
+            x.strokeRect(8, 8, w - 16, h - 16);
+            x.strokeStyle = "rgba(60,90,140,.5)";
+            x.beginPath();
+            x.moveTo(40, 70);
+            x.lineTo(w - 40, 70);
+            x.stroke();
+            x.beginPath();
+            x.moveTo(40, 110);
+            x.lineTo(w - 120, 110);
+            x.stroke();
+            x.fillStyle = "#2ec27a";
+            x.fillRect(40, 140, 90, 26);
+          },
+          512,
+          256,
+        );
+        const wb = new THREE.Mesh(
+          new THREE.PlaneGeometry(3.2, 1.6),
+          new THREE.MeshBasicMaterial({ map: wbTex }),
+        );
+        wb.position.set(-2, 1.9, -11.9);
+        wb.rotation.y = 0;
+        room.add(wb);
+        function plant(x, z) {
+          cyl(0.22, 0.28, 0.4, 0x8a4a2a, x, 0.2, z, 10);
+          const f1 = new THREE.Mesh(
+            new THREE.SphereGeometry(0.42, 10, 8),
+            M(0x2e7d4f, 0.9),
+          );
+          f1.position.set(x, 0.85, z);
+          room.add(f1);
+          const f2 = new THREE.Mesh(
+            new THREE.SphereGeometry(0.3, 10, 8),
+            M(0x3a9a62, 0.9),
+          );
+          f2.position.set(x + 0.15, 1.15, z + 0.1);
+          room.add(f2);
+        }
+        plant(-14, -8.5);
+        plant(14, -11);
+        plant(-14, 11);
+        plant(14, 4);
+        plant(-13.5, -6);
+        function signTexture(text) {
+          return canvasTex(
+            (x, w, h) => {
+              x.fillStyle = "#f4f1ea";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#16324a";
+              x.font = "700 44px Arial";
+              x.textBaseline = "middle";
+              x.fillText(text, 36, h / 2 - 6);
+              x.fillStyle = "#2ec27a";
+              x.fillRect(36, h - 30, 120, 6);
+            },
+            512,
+            128,
+          );
+        }
+        function wallSign(text, x, y, z, ry, w, h) {
+          const pw = w || 2.2,
+            ph = h || 0.55;
+          const s = planeTexture(signTexture(text), pw, ph, true);
+          s.position.set(x, y, z);
+          s.rotation.y = ry;
+          room.add(s);
+          const backing = new THREE.Mesh(
+            new THREE.BoxGeometry(pw + 0.1, ph + 0.1, 0.04),
+            M(0x16324a, 0.6),
+          );
+          backing.position.set(x, y, z);
+          backing.rotation.y = ry;
+          backing.translateZ(-0.025);
+          room.add(backing);
+        }
+        wallSign("ASSET MANAGEMENT", 9, 2.6, 11.9, Math.PI);
+        wallSign("DEPRECIATION", -13.1, 2.1, 11.9, Math.PI);
+        wallSign("MAINTENANCE", 10.6, 3.3, -11.9, 0);
+        wallSign("MONITORING", -12.5, 2.6, -11.9, 0);
+        wallSign("AUDIT TRAIL", -14.9, 2.6, 4.3, Math.PI / 2);
+        wallSign("ASSET BORROWING", 14.9, 2.6, 4, -Math.PI / 2);
+        wallSign("A-01 - PROJECTOR", 9.5, 1.0, 11.05, Math.PI, 1.3, 0.33);
+        wallSign("A-02 - AV PARTS", 12.2, 1.0, 11.05, Math.PI, 1.3, 0.33);
+        for (const bz of [-9.6, -4.8, 0, 4.8, 9.6]) {
+          box(30, 0.12, 0.25, 0x4e351f, 0, 3.94, bz, 0);
+        }
+        box(20, 0.3, 0.6, 0x5c6a78, 0, 3.8, 10.5, 0).material = M(
+          0x5c6a78,
+          0.35,
+          0.7,
+        );
+        const hubLap = makeLaptop();
+        hubLap.position.set(-0.8, 0.86, 0.2);
+        hubLap.rotation.y = 0.5;
+        room.add(hubLap);
+        box(0.5, 0.025, 0.35, 0xf2f4f6, 0.7, 0.84, -0.3, 0.2);
+        box(0.4, 0.025, 0.3, 0xdfe6ee, 0.74, 0.865, -0.28, -0.12);
+        cyl(0.05, 0.045, 0.12, 0x3f5a78, 0.3, 0.885, 0.55, 10);
+        /* Central work hub table (kept as transition landmark) */
+        function tableT(x, z, w, d, topY) {
+          topY = topY || 0.78;
+          const t = new THREE.Mesh(
+            new THREE.BoxGeometry(w, 0.09, d),
+            M(0x825d36, 0.6),
+          );
+          t.position.set(x, topY, z);
+          room.add(t);
+          for (const sx of [-1, 1])
+            for (const sz of [-1, 1]) {
+              const leg = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.05, 0.05, topY, 8),
+                M(0x4e351f),
+              );
+              leg.position.set(
+                x + sx * (w / 2 - 0.08),
+                topY / 2,
+                z + sz * (d / 2 - 0.08),
+              );
+              room.add(leg);
+            }
+          return t;
+        }
+        tableR(0, 0, 2.4);
+        for (const per of [
+          [-2.9, 0.6, Math.PI / 2],
+          [2.9, -0.4, -Math.PI / 2],
+          [0.5, 2.9, Math.PI],
+        ]) {
+          const pp = makePerson({ cloth: 0x17202d });
+          pp.position.set(per[0], 0, per[1]);
+          pp.rotation.y = per[2];
+          room.add(pp);
+        }
+        function tableR(x, z, r) {
+          r = r || 0.95;
+          const k = r / 0.95;
+          const top = new THREE.Mesh(
+            new THREE.CylinderGeometry(r, r, 0.09, 22),
+            M(0x825d36, 0.6),
+          );
+          top.position.set(x, 0.735, z);
+          room.add(top);
+          const ped = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.08 * k, 0.12 * k, 0.69, 10),
+            M(0x4e351f),
+          );
+          ped.position.set(x, 0.345, z);
+          room.add(ped);
+          const bs = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.3 * k, 0.36 * k, 0.05, 14),
+            M(0x4e351f),
+          );
+          bs.position.set(x, 0.025, z);
+          room.add(bs);
+          return top;
+        }
+        /* Asset Management area SE (+X,+Z), center (9,7): ring of round tables */
+        tableR(6.3, 7.0);
+        tableR(11.7, 7.0);
+        tableR(9, 9.5);
+        tableR(9, 4.4);
+        const pedC = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.7, 0.78, 0.45, 18),
+          M(0x5c6a78, 0.7),
+        );
+        pedC.position.set(9, 0.225, 7.0);
+        room.add(pedC);
+        box(0.55, 0.4, 0.4, 0x9a7a52, 9, 0.65, 7.0, 0.2);
+        function shelf(x, z, ry) {
+          const g = new THREE.Group();
+          g.position.set(x, 0, z);
+          g.rotation.y = ry || 0;
+          room.add(g);
+          function p(m) {
+            g.add(m);
+            return m;
+          }
+          for (const sx of [-0.8, 0.8]) {
+            const post = new THREE.Mesh(GEO_BOX, M(0x445060, 0.4, 0.6));
+            post.scale.set(0.07, 1.9, 0.4);
+            post.position.set(sx, 0.95, 0);
+            p(post);
+          }
+          for (const sy of [0.25, 0.95, 1.65]) {
+            const sh = new THREE.Mesh(GEO_BOX, M(0x5c6a78));
+            sh.scale.set(1.7, 0.06, 0.45);
+            sh.position.set(0, sy, 0);
+            p(sh);
+            const b1 = new THREE.Mesh(GEO_BOX, M(0x9a7a52, 0.8));
+            b1.scale.set(0.5, 0.4, 0.35);
+            b1.position.set(-0.4, sy + 0.23, 0);
+            p(b1);
+            const b2 = new THREE.Mesh(GEO_BOX, M(0x3f5a78, 0.8));
+            b2.scale.set(0.45, 0.32, 0.35);
+            b2.position.set(0.4, sy + 0.19, 0);
+            p(b2);
+          }
+          return g;
+        }
+        shelf(9.5, 11.3, 0);
+        shelf(12.2, 11.3, 0);
+        shelf(14.4, 5.2, Math.PI / 2);
+        shelf(14.4, 8.2, Math.PI / 2);
+        box(0.7, 0.5, 0.5, 0x9a7a52, 8.2, 0.25, 11.1, 0);
+        box(0.55, 0.4, 0.45, 0x3f5a78, 8.95, 0.2, 11.25, 0.3);
+        const em1 = new THREE.Mesh(
+          new THREE.BoxGeometry(0.8, 0.5, 0.06),
+          M(0x1c2733, 0.5),
+        );
+        em1.position.set(11.7, 1.31, 7.0);
+        em1.rotation.y = -Math.PI / 2;
+        room.add(em1);
+        const es1 = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.7, 0.4),
+          new THREE.MeshBasicMaterial({ color: 0x9fc4e8 }),
+        );
+        es1.position.set(11.66, 1.31, 7.0);
+        es1.rotation.y = -Math.PI / 2;
+        room.add(es1);
+        box(0.15, 0.025, 0.45, 0xd8dee6, 11.2, 0.795, 7.0, 0);
+        box(0.1, 0.008, 0.4, 0x2a2f38, 11.2, 0.81, 7.0, 0);
+        box(0.08, 0.28, 0.08, 0x2a2f38, 11.74, 0.92, 7.0, 0);
+        box(0.5, 0.35, 0.4, 0x3f5a78, 9, 0.955, 9.5, 0.2);
+        /* Projector hero on WEST table */
+        const proj = new THREE.Group();
+        proj.position.set(6.3, 0.79, 7.0);
+        proj.rotation.y = Math.PI;
+        room.add(proj);
+        const pbody = new THREE.Mesh(
+          new THREE.BoxGeometry(0.5, 0.17, 0.38),
+          M(0x22303f, 0.45, 0.4),
+        );
+        pbody.position.y = 0.1;
+        proj.add(pbody);
+        const lens = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.07, 0.07, 0.1, 14),
+          M(0x0b1220, 0.3),
+        );
+        lens.rotation.z = Math.PI / 2;
+        lens.position.set(-0.28, 0.1, 0);
+        proj.add(lens);
+        const lensGlass = new THREE.Mesh(
+          new THREE.CircleGeometry(0.05, 14),
+          new THREE.MeshBasicMaterial({ color: 0x7ab8ff }),
+        );
+        lensGlass.position.set(-0.335, 0.1, 0);
+        lensGlass.rotation.y = -Math.PI / 2;
+        proj.add(lensGlass);
+        for (let bi = 0; bi < 3; bi++) {
+          const b = new THREE.Mesh(
+            new THREE.BoxGeometry(0.05, 0.015, 0.05),
+            M(0x2ec27a, 0.5),
+          );
+          b.position.set(-0.1 + bi * 0.1, 0.19, -0.14);
+          proj.add(b);
+        }
+        for (const fx of [-0.18, 0.18])
+          for (const fz of [-0.12, 0.12]) {
+            const f = new THREE.Mesh(
+              new THREE.BoxGeometry(0.06, 0.03, 0.06),
+              M(0x0b1220),
+            );
+            f.position.set(fx, 0.005, fz);
+            proj.add(f);
+          }
+        const pqr = planeTexture(qrTexture(5), 0.22, 0.22);
+        pqr.rotation.x = -Math.PI / 2;
+        pqr.position.set(0.02, 0.188, 0);
+        proj.add(pqr);
+        const pglow = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.34, 0.34),
+          new THREE.MeshBasicMaterial({
+            color: 0x2ec27a,
+            transparent: true,
+            opacity: 0.1,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+          }),
+        );
+        pglow.rotation.x = -Math.PI / 2;
+        pglow.position.set(0.02, 0.19, 0);
+        proj.add(pglow);
+        /* Floating Detail Aset screen beside projector */
+        const floatAsset = createFloatingScreen(0.7, 1.21, drawDetailAsset);
+        floatAsset.group.position.set(6.8, 1.42, 6.0);
+        floatAsset.group.rotation.set(-0.24, 1.45, 0.08);
+        floatAsset.setOpacity(0);
+        room.add(floatAsset.group);
+        /* Borrowing: laptop + QR on NORTH table, employee with tablet in right hand */
+        const borrowLaptop = makeLaptop();
+        borrowLaptop.position.set(9.15, 0.815, 3.95);
+        borrowLaptop.rotation.y = -0.15;
+        room.add(borrowLaptop);
+        const borrower = makePerson({ cloth: 0x111827 });
+        borrower.position.set(9.8, 0, 3.05);
+        borrower.rotation.y = -0.3;
+        room.add(borrower);
+        const device = createDeviceScreen();
+        device.group.position.set(0.12, -0.24, 0.25);
+        device.group.rotation.set(-1.35, -0.49, -2.65);
+        device.group.scale.setScalar(1.25);
+        borrower.userData.lArm.scale.set(1, 1.15, 1);
+        borrower.userData.lArm.add(device.group);
+        borrower.userData.lArm.position.set(-0.27, 0.86, 0.15);
+        borrower.userData.lArm.rotation.x = -1.27;
+        borrower.userData.lArm.rotation.z = -0.06;
+        borrower.userData.rArm.rotation.x = -0.12;
+        borrower.userData.rArm.rotation.z = -0.32;
+        /* Reserved placeholders: NE maintenance, SW depreciation, NW monitoring, W audit */
+        /* Maintenance NE: AC wall unit + A-frame ladder + technician + toolbox */
+        const acNE = new THREE.Mesh(
+          new THREE.BoxGeometry(2.0, 0.55, 0.45),
+          M(0xe7edf2, 0.4, 0.25),
+        );
+        acNE.position.set(10.6, 2.6, -11.775);
+        room.add(acNE);
+        const acVent = new THREE.Mesh(
+          new THREE.BoxGeometry(1.5, 0.12, 0.08),
+          M(0x172333, 0.4),
+        );
+        acVent.position.set(10.6, 2.45, -11.53);
+        room.add(acVent);
+        const acLed = new THREE.Mesh(
+          new THREE.BoxGeometry(0.14, 0.03, 0.02),
+          new THREE.MeshBasicMaterial({ color: 0x2ec27a }),
+        );
+        acLed.position.set(10.0, 2.56, -11.545);
+        room.add(acLed);
+        const ladderNE = makeAFrameLadder();
+        ladderNE.position.set(9.8, 0, -10.45);
+        room.add(ladderNE);
+        const techNE = makePerson({ cloth: 0x17447d, cloth2: 0x2c68bb });
+        techNE.position.set(9.8, 1.0, -10.25);
+        techNE.rotation.y = -0.6;
+        room.add(techNE);
+        techNE.userData.lArm.rotation.z = -0.55;
+        techNE.userData.rArm.rotation.z = 0.75;
+        techNE.userData.rArm.rotation.x = 0.35;
+        const tbBody = box(0.55, 0.32, 0.38, 0x26384c, 11.2, 0.16, -9.4, 0);
+        tbBody.material = M(0x26384c, 0.5, 0.3);
+        box(0.59, 0.08, 0.42, 0x1d2733, 11.2, 0.36, -9.4, 0);
+        box(0.2, 0.03, 0.05, 0x11151c, 11.2, 0.43, -9.4, 0);
+        box(0.03, 0.06, 0.05, 0x11151c, 11.12, 0.395, -9.4, 0);
+        box(0.03, 0.06, 0.05, 0x11151c, 11.28, 0.395, -9.4, 0);
+        box(0.05, 0.1, 0.02, 0xb9c2c9, 11.05, 0.2, -9.2, 0);
+        box(0.05, 0.1, 0.02, 0xb9c2c9, 11.35, 0.2, -9.2, 0);
+        /* Depreciation SW: wall TV + meeting table, team reviewing asset value */
+        const depTV = new THREE.Group();
+        depTV.position.set(-9, 2.0, 11.9);
+        room.add(depTV);
+        const tvHouse = new THREE.Mesh(
+          new THREE.BoxGeometry(4.96, 2.86, 0.09),
+          M(0x11151c, 0.4),
+        );
+        depTV.add(tvHouse);
+        const tvMount = new THREE.Mesh(
+          new THREE.BoxGeometry(0.4, 0.4, 0.12),
+          M(0x2a2f38, 0.5),
+        );
+        tvMount.position.set(0, 0, 0.04);
+        depTV.add(tvMount);
+        const tvBezel = new THREE.Mesh(
+          new THREE.BoxGeometry(4.9, 2.8, 0.02),
+          M(0x0b1220, 0.4),
+        );
+        tvBezel.position.z = -0.05;
+        depTV.add(tvBezel);
+        const tvScreen = planeTexture(depreciationTexture(), 4.8, 2.7, true);
+        tvScreen.position.z = -0.065;
+        tvScreen.rotation.y = Math.PI;
+        depTV.add(tvScreen);
+        function lapScreenTex() {
+          return canvasTex(
+            (x, w, h) => {
+              x.fillStyle = "#fbfaf7";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#16324a";
+              x.font = "700 20px Arial";
+              x.fillText("Asset Overview", 14, 26);
+              x.fillStyle = "#5b6b7c";
+              x.font = "13px Arial";
+              x.fillText("AST-001 - ThinkPad", 14, 46);
+              x.fillStyle = "#132033";
+              x.font = "700 30px Arial";
+              x.fillText("Rp 5.000.000", 14, 80);
+              x.fillStyle = "#1d9e5e";
+              rrA(x, 14, 92, 90, 24, 12);
+              x.fill();
+              x.fillStyle = "#ffffff";
+              x.font = "700 13px Arial";
+              x.fillText("Aktif", 30, 109);
+              x.strokeStyle = "#2f6fe4";
+              x.lineWidth = 3;
+              x.beginPath();
+              x.moveTo(16, 140);
+              x.lineTo(90, 128);
+              x.lineTo(170, 132);
+              x.lineTo(240, 118);
+              x.stroke();
+            },
+            256,
+            160,
+          );
+        }
+        function tabScreenTex() {
+          return canvasTex(
+            (x, w, h) => {
+              x.fillStyle = "#ffffff";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#1d9e5e";
+              x.fillRect(0, 0, w, 26);
+              x.fillStyle = "#ffffff";
+              x.font = "700 14px Arial";
+              x.fillText("Aset", 8, 18);
+              x.fillStyle = "#132033";
+              x.font = "700 22px Arial";
+              x.fillText("Rp 5 jt", 8, 52);
+              x.fillStyle = "#dfe6ee";
+              x.fillRect(8, 64, 112, 8);
+              x.fillRect(8, 78, 80, 8);
+              x.fillRect(8, 92, 96, 8);
+              x.strokeStyle = "#2f6fe4";
+              x.lineWidth = 3;
+              x.beginPath();
+              x.moveTo(8, 140);
+              x.lineTo(50, 128);
+              x.lineTo(90, 132);
+              x.lineTo(120, 118);
+              x.stroke();
+            },
+            128,
+            160,
+          );
+        }
+        function docTexture() {
+          return canvasTex(
+            (x, w, h) => {
+              x.fillStyle = "#ffffff";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#1d9e5e";
+              x.fillRect(0, 0, w, 44);
+              x.fillStyle = "#ffffff";
+              x.font = "700 20px Arial";
+              x.fillText("LAPORAN ASET", 16, 30);
+              x.fillStyle = "#16324a";
+              x.font = "700 24px Arial";
+              x.fillText("Depresiasi 2026", 16, 78);
+              x.fillStyle = "#7a8aa0";
+              x.font = "15px Arial";
+              x.fillText("AST-001 - ThinkPad", 16, 102);
+              x.fillStyle = "#dfe6ee";
+              for (let i = 0; i < 8; i++) {
+                x.fillRect(16, 124 + i * 22, i % 3 === 2 ? 150 : 224, 9);
+              }
+              x.strokeStyle = "#2f6fe4";
+              x.lineWidth = 3;
+              x.strokeRect(16, h - 40, 60, 24);
+            },
+            256,
+            340,
+          );
+        }
+        function openLaptop(x, z, ry, ui, baseY) {
+          const g = new THREE.Group();
+          g.position.set(x, baseY === undefined ? 0.825 : baseY, z);
+          g.rotation.y = ry;
+          room.add(g);
+          const base = new THREE.Mesh(GEO_BOX, M(0x1c2733, 0.5));
+          base.scale.set(0.36, 0.025, 0.24);
+          base.position.y = 0.0125;
+          g.add(base);
+          const kb = new THREE.Mesh(GEO_BOX, M(0x2a2f38, 0.6));
+          kb.scale.set(0.32, 0.006, 0.19);
+          kb.position.y = 0.028;
+          g.add(kb);
+          const lid = new THREE.Group();
+          lid.position.set(0, 0.025, -0.12);
+          lid.rotation.x = -0.26;
+          g.add(lid);
+          const shell = new THREE.Mesh(
+            new THREE.BoxGeometry(0.36, 0.23, 0.015),
+            M(0x1c2733, 0.5),
+          );
+          shell.position.y = 0.115;
+          lid.add(shell);
+          const scr = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.32, 0.2),
+            new THREE.MeshBasicMaterial({ map: ui }),
+          );
+          scr.position.set(0, 0.115, 0.009);
+          lid.add(scr);
+          return g;
+        }
+        tableT(-9, 7.6, 1.6, 4.5);
+        const lapUI = lapScreenTex();
+        const tabUI = tabScreenTex();
+        const docUI = docTexture();
+        openLaptop(-8.7, 9.2, 1.24, lapUI);
+        openLaptop(-9.45, 8.95, -1.4, lapUI);
+        box(0.22, 0.03, 0.3, 0x3f5a78, -9.15, 0.84, 9.5, 0.4);
+        const pen1 = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.008, 0.008, 0.14, 8),
+          M(0x11151c, 0.6),
+        );
+        pen1.rotation.x = Math.PI / 2;
+        pen1.position.set(-9.1, 0.833, 9.28);
+        room.add(pen1);
+        cyl(0.045, 0.04, 0.11, 0x3f5a78, -9.55, 0.88, 9.45, 10);
+        box(0.06, 0.03, 0.1, 0x11151c, -9.62, 0.84, 8.55, 0.2);
+        box(0.35, 0.04, 0.28, 0x3f5a78, -8.95, 0.845, 8.75, 0.05);
+        box(0.33, 0.035, 0.26, 0x9a7a52, -8.93, 0.882, 8.73, 0.2);
+        cyl(0.04, 0.04, 0.22, 0x9fc4e8, -9.35, 0.935, 8.35, 10);
+        box(0.25, 0.02, 0.32, 0x0d1724, -8.5, 0.835, 7.6, 0.3);
+        const depTab = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.21, 0.28),
+          new THREE.MeshBasicMaterial({ map: tabUI }),
+        );
+        depTab.rotation.set(-Math.PI / 2, 0, 0.3);
+        depTab.position.set(-8.5, 0.848, 7.6);
+        room.add(depTab);
+        box(0.08, 0.02, 0.16, 0x0d1724, -8.4, 0.835, 7.25, -0.2);
+        box(0.06, 0.005, 0.12, 0x9fc4e8, -8.4, 0.848, 7.25, -0.2);
+        const depDocA = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.3, 0.4),
+          new THREE.MeshBasicMaterial({ map: docUI }),
+        );
+        depDocA.rotation.set(-Math.PI / 2, 0, 0.12);
+        depDocA.position.set(-9.5, 0.828, 8.3);
+        room.add(depDocA);
+        const depDocB = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.3, 0.4),
+          new THREE.MeshBasicMaterial({ map: docUI }),
+        );
+        depDocB.rotation.set(-Math.PI / 2, 0, -0.1);
+        depDocB.position.set(-8.6, 0.828, 6.9);
+        room.add(depDocB);
+        const depQR = planeTexture(qrTexture(37), 0.18, 0.18, true);
+        depQR.rotation.x = -Math.PI / 2;
+        depQR.position.set(-9.45, 0.83, 6.45);
+        room.add(depQR);
+        box(0.12, 0.03, 0.18, 0x11151c, -9.55, 0.84, 6.1, 0.25);
+        box(0.08, 0.008, 0.04, 0xdfe6ee, -9.55, 0.857, 6.13, 0.25);
+        box(0.22, 0.03, 0.3, 0x6b7a8d, -8.45, 0.84, 8.35, -0.3);
+        const pen2 = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.008, 0.008, 0.14, 8),
+          M(0x11151c, 0.6),
+        );
+        pen2.rotation.x = Math.PI / 2;
+        pen2.position.set(-8.5, 0.833, 8.1);
+        room.add(pen2);
+        cyl(0.045, 0.04, 0.11, 0x2ec27a, -8.55, 0.88, 7.95, 10);
+        box(2.4, 0.5, 0.4, 0x5c6a78, -9, 0.25, 11.72, 0);
+        box(0.08, 0.3, 0.25, 0x3f5a78, -9.5, 0.65, 11.7, 0.06);
+        box(0.08, 0.3, 0.25, 0x2c3a4d, -9.35, 0.65, 11.7, -0.05);
+        box(0.08, 0.3, 0.25, 0x2ec27a, -9.2, 0.65, 11.7, 0.03);
+        const depPres = makePerson({ cloth: 0x2c5f8a });
+        depPres.position.set(-6.4, 0, 10.0);
+        depPres.rotation.y = -Math.PI / 2;
+        room.add(depPres);
+        depPres.userData.rArm.rotation.set(-2.1, 0, 0);
+        const depP2 = makePerson({ cloth: 0x3a4a5c });
+        depP2.position.set(-7.3, 0, 7.6);
+        depP2.rotation.y = -1.57;
+        room.add(depP2);
+        const depP3 = makePerson({ cloth: 0x5c5648 });
+        depP3.position.set(-11.1, 0, 9.3);
+        depP3.rotation.y = 0.7;
+        room.add(depP3);
+        const depP4 = makePerson({ cloth: 0x2c3a4d });
+        depP4.position.set(-7.0, 0, 8.5);
+        depP4.rotation.y = -0.5;
+        room.add(depP4);
+        /* Monitoring NW: wall TV control room + operators + server rack */
+        function monDashTexture() {
+          return canvasTex(
+            function (x, w, h) {
+              x.fillStyle = "#fbfaf7";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#1d9e5e";
+              x.font = "700 20px Arial";
+              x.fillText("ASSETRACK", 36, 36);
+              x.fillStyle = "#16324a";
+              x.font = "700 32px Arial";
+              x.fillText("Monitoring Dashboard", 36, 68);
+              x.fillStyle = "#1d9e5e";
+              x.beginPath();
+              x.arc(872, 44, 8, 0, 6.2832);
+              x.fill();
+              x.font = "700 22px Arial";
+              x.fillText("Live", 888, 52);
+              x.fillStyle = "#8a97a3";
+              x.font = "15px Arial";
+              x.textAlign = "right";
+              x.fillText("sample data", 988, 80);
+              x.textAlign = "left";
+              function card(px, py, pw, ph) {
+                x.fillStyle = "#ffffff";
+                rrA(x, px, py, pw, ph, 14);
+                x.fill();
+                x.strokeStyle = "#e2e9f5";
+                x.lineWidth = 1.5;
+                rrA(x, px, py, pw, ph, 14);
+                x.stroke();
+              }
+              card(36, 92, 250, 160);
+              x.fillStyle = "#7a8aa0";
+              x.font = "17px Arial";
+              x.fillText("TOTAL ASSETS", 56, 122);
+              x.fillStyle = "#1d9e5e";
+              x.font = "700 60px Arial";
+              x.fillText("1,420", 52, 186);
+              x.fillStyle = "#7a8aa0";
+              x.font = "17px Arial";
+              x.fillText("assets tracked", 56, 216);
+              card(302, 92, 300, 160);
+              x.fillStyle = "#16324a";
+              x.font = "700 20px Arial";
+              x.fillText("Asset Status", 322, 122);
+              const stat = [
+                ["#1d9e5e", "Active", "1,280"],
+                ["#2f6fe4", "Borrowed", "92"],
+                ["#e0a53c", "Maintenance", "31"],
+                ["#d9534f", "Lost", "17"],
+              ];
+              stat.forEach(function (s, i) {
+                const sy = 150 + i * 26;
+                x.fillStyle = s[0];
+                x.beginPath();
+                x.arc(330, sy - 5, 6, 0, 6.2832);
+                x.fill();
+                x.fillStyle = "#3a4a5c";
+                x.font = "17px Arial";
+                x.fillText(s[1], 344, sy);
+                x.fillStyle = "#132033";
+                x.textAlign = "right";
+                x.fillText(s[2], 582, sy);
+                x.textAlign = "left";
+              });
+              card(618, 92, 370, 160);
+              x.fillStyle = "#16324a";
+              x.font = "700 20px Arial";
+              x.fillText("Live Alerts", 638, 122);
+              const alerts = [
+                ["#d9534f", "AST-0021", "Maintenance due", "2m"],
+                ["#e0a53c", "AST-0182", "Borrowed", "10m"],
+                ["#2f6fe4", "PC-LAB-04", "Location changed", "25m"],
+              ];
+              alerts.forEach(function (a, i) {
+                const ay = 150 + i * 34;
+                x.fillStyle = a[0];
+                x.beginPath();
+                x.arc(646, ay - 5, 6, 0, 6.2832);
+                x.fill();
+                x.fillStyle = "#132033";
+                x.font = "700 17px Arial";
+                x.fillText(a[1], 660, ay);
+                x.fillStyle = "#7a8aa0";
+                x.font = "15px Arial";
+                x.fillText(a[2], 770, ay);
+                x.fillText(a[3], 930, ay);
+              });
+              card(36, 268, 450, 212);
+              x.fillStyle = "#16324a";
+              x.font = "700 20px Arial";
+              x.fillText("Asset Utilization", 56, 300);
+              x.fillStyle = "#1d9e5e";
+              x.font = "700 18px Arial";
+              x.fillText("+8%", 400, 300);
+              const upts = [30, 48, 40, 62, 55, 78];
+              x.strokeStyle = "rgba(22,50,74,.12)";
+              x.lineWidth = 1;
+              [330, 370, 410, 450].forEach(function (gy) {
+                x.beginPath();
+                x.moveTo(70, gy);
+                x.lineTo(460, gy);
+                x.stroke();
+              });
+              x.strokeStyle = "#1d9e5e";
+              x.lineWidth = 4;
+              x.lineJoin = "round";
+              x.beginPath();
+              upts.forEach(function (v, i) {
+                const qx = 80 + (i * 370) / 5,
+                  qy = 450 - v * 1.5;
+                if (i === 0) x.moveTo(qx, qy);
+                else x.lineTo(qx, qy);
+              });
+              x.stroke();
+              x.fillStyle = "#7a8aa0";
+              x.font = "14px Arial";
+              ["Jan", "Feb", "Mar", "Apr", "May", "Jun"].forEach(
+                function (m, i) {
+                  x.fillText(m, 72 + (i * 370) / 5, 470);
+                },
+              );
+              card(502, 268, 220, 212);
+              x.fillStyle = "#16324a";
+              x.font = "700 18px Arial";
+              x.fillText("Location", 522, 300);
+              const bars = [
+                ["Head", 620, "#2f6fe4"],
+                ["Lab", 340, "#4b8dff"],
+                ["Branch", 280, "#7aa7ff"],
+              ];
+              bars.forEach(function (b, i) {
+                const bx = 534 + i * 62,
+                  bh = (b[1] / 620) * 110;
+                x.fillStyle = b[2];
+                x.fillRect(bx, 450 - bh, 40, bh);
+                x.fillStyle = "#7a8aa0";
+                x.font = "13px Arial";
+                x.fillText(b[0], bx, 468);
+              });
+              card(738, 268, 250, 212);
+              x.fillStyle = "#16324a";
+              x.font = "700 18px Arial";
+              x.fillText("Recent Activity", 758, 300);
+              const acts = [
+                ["09:12", 150],
+                ["10:30", 110],
+                ["13:20", 170],
+                ["16:45", 90],
+              ];
+              acts.forEach(function (a, i) {
+                const ay = 330 + i * 36;
+                x.fillStyle = "#1d9e5e";
+                x.beginPath();
+                x.arc(766, ay - 4, 5, 0, 6.2832);
+                x.fill();
+                x.fillStyle = "#7a8aa0";
+                x.font = "14px Arial";
+                x.fillText(a[0], 780, ay);
+                x.fillStyle = "#dfe6ee";
+                x.fillRect(830, ay - 12, a[1], 10);
+              });
+            },
+            1024,
+            512,
+          );
+        }
+        function floorMapTex() {
+          return canvasTex(
+            function (x, w, h) {
+              x.fillStyle = "#fbfaf7";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#16324a";
+              x.font = "700 18px Arial";
+              x.fillText("Floor Map", 12, 24);
+              x.strokeStyle = "#9fb2c5";
+              x.lineWidth = 2;
+              x.strokeRect(12, 36, 100, 60);
+              x.strokeRect(120, 36, 124, 60);
+              x.strokeRect(12, 104, 180, 44);
+              x.fillStyle = "#1d9e5e";
+              [
+                [40, 55],
+                [80, 75],
+                [150, 60],
+                [200, 70],
+                [60, 125],
+                [140, 130],
+              ].forEach(function (p) {
+                x.beginPath();
+                x.arc(p[0], p[1], 4, 0, 6.2832);
+                x.fill();
+              });
+              x.fillStyle = "#2f6fe4";
+              x.beginPath();
+              x.arc(180, 120, 4, 0, 6.2832);
+              x.fill();
+            },
+            256,
+            160,
+          );
+        }
+        function activityTex() {
+          return canvasTex(
+            function (x, w, h) {
+              x.fillStyle = "#ffffff";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#16324a";
+              x.font = "700 18px Arial";
+              x.fillText("Recent Activity", 12, 24);
+              const rows = [150, 110, 170, 90, 130];
+              rows.forEach(function (r, i) {
+                const ay = 48 + i * 22;
+                x.fillStyle = i % 2 ? "#2f6fe4" : "#1d9e5e";
+                x.beginPath();
+                x.arc(18, ay - 4, 4, 0, 6.2832);
+                x.fill();
+                x.fillStyle = "#dfe6ee";
+                x.fillRect(30, ay - 10, r, 10);
+              });
+            },
+            256,
+            160,
+          );
+        }
+        function assetTag(x, y, z, ry, seed) {
+          const g = new THREE.Group();
+          g.position.set(x, y, z);
+          g.rotation.y = ry;
+          room.add(g);
+          const back = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.16, 0.16),
+            new THREE.MeshBasicMaterial({ color: 0xffffff }),
+          );
+          g.add(back);
+          const code = planeTexture(qrTexture(seed), 0.13, 0.13, true);
+          code.position.z = 0.002;
+          g.add(code);
+          return g;
+        }
+        const monTV = new THREE.Group();
+        monTV.position.set(-9, 2.3, -11.9);
+        room.add(monTV);
+        const monHouse = new THREE.Mesh(
+          new THREE.BoxGeometry(4.56, 2.36, 0.1),
+          M(0x11151c, 0.4),
+        );
+        monTV.add(monHouse);
+        const monMount = new THREE.Mesh(
+          new THREE.BoxGeometry(0.4, 0.4, 0.12),
+          M(0x2a2f38, 0.5),
+        );
+        monMount.position.set(0, 0, -0.04);
+        monTV.add(monMount);
+        const monBezel = new THREE.Mesh(
+          new THREE.BoxGeometry(4.5, 2.3, 0.02),
+          M(0x0b1220, 0.4),
+        );
+        monBezel.position.z = 0.05;
+        monTV.add(monBezel);
+        const monScreen = planeTexture(monDashTexture(), 4.4, 2.2, true);
+        monScreen.position.z = 0.065;
+        monTV.add(monScreen);
+        box(1.2, 2.0, 0.8, 0x1c2733, -13.5, 1.0, -11.3, 0);
+        const ledGeo = new THREE.BoxGeometry(0.05, 0.03, 0.02);
+        for (let s = 0; s < 6; s++) {
+          box(1.0, 0.18, 0.06, 0x2a2f38, -13.5, 0.35 + s * 0.28, -10.88, 0);
+          const led = new THREE.Mesh(
+            ledGeo,
+            new THREE.MeshBasicMaterial({
+              color: s % 2 ? 0xe0a53c : 0x2ec27a,
+            }),
+          );
+          led.position.set(-13.15, 0.35 + s * 0.28, -10.87);
+          room.add(led);
+        }
+        box(1.0, 0.9, 0.45, 0x5c6a78, -11.8, 0.45, -11.5, 0);
+        box(0.5, 0.22, 0.38, 0xe7edf2, -11.8, 1.01, -11.5, 0);
+        box(0.42, 0.07, 0.3, 0x2a2f38, -11.8, 1.155, -11.5, 0);
+        box(0.3, 0.02, 0.2, 0xf2f4f6, -11.8, 1.2, -11.5, 0);
+        box(0.07, 0.32, 0.24, 0x3f5a78, -11.45, 1.06, -11.5, 0.04);
+        box(0.07, 0.32, 0.24, 0x2c3a4d, -11.36, 1.06, -11.5, -0.03);
+        assetTag(-11.8, 1.01, -11.3, 0, 41);
+        const monOp1 = makePerson({ cloth: 0x2c5f8a });
+        monOp1.position.set(-9.3, 0, -6.0);
+        monOp1.rotation.y = Math.PI;
+        room.add(monOp1);
+        monOp1.userData.lArm.rotation.x = -0.85;
+        monOp1.userData.rArm.rotation.x = -0.85;
+        const monOp2 = makePerson({ cloth: 0x3a4a5c });
+        monOp2.position.set(-7.7, 0, -6.0);
+        monOp2.rotation.y = Math.PI + 0.12;
+        room.add(monOp2);
+        monOp2.userData.lArm.rotation.x = -0.65;
+        monOp2.userData.rArm.rotation.x = -1.0;
+        tableT(-8.5, -7.0, 3.6, 1.2);
+        box(0.08, 0.35, 0.08, 0x2a2f38, -9.3, 1.0, -7.35, 0);
+        box(0.95, 0.55, 0.06, 0x1c2733, -9.3, 1.35, -7.35, 0);
+        box(0.08, 0.35, 0.08, 0x2a2f38, -7.7, 1.0, -7.35, 0);
+        box(0.95, 0.55, 0.06, 0x1c2733, -7.7, 1.35, -7.35, 0);
+        box(0.45, 0.025, 0.15, 0xd8dee6, -9.3, 0.84, -6.55, 0);
+        box(0.45, 0.025, 0.15, 0xd8dee6, -7.7, 0.84, -6.55, 0);
+        box(0.06, 0.03, 0.1, 0x11151c, -8.98, 0.84, -6.55, 0);
+        box(0.06, 0.03, 0.1, 0x11151c, -7.38, 0.84, -6.55, 0);
+        box(0.3, 0.02, 0.4, 0xf2f4f6, -9.9, 0.835, -6.6, 0.1);
+        cyl(0.045, 0.04, 0.11, 0x2ec27a, -7.0, 0.88, -6.6, 10);
+        const monMap = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.8, 0.4),
+          new THREE.MeshBasicMaterial({ map: floorMapTex() }),
+        );
+        monMap.position.set(-9.3, 1.35, -7.315);
+        room.add(monMap);
+        const monAct = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.8, 0.4),
+          new THREE.MeshBasicMaterial({ map: activityTex() }),
+        );
+        monAct.position.set(-7.7, 1.35, -7.315);
+        room.add(monAct);
+        openLaptop(-8.5, -7.0, 0, lapScreenTex(), 0.78);
+        box(0.22, 0.45, 0.45, 0x1c2733, -2.2, 0.225, -10.0, 0);
+        assetTag(-2.2, 0.3, -9.77, 0, 42);
+        box(0.6, 0.4, 0.5, 0x9a7a52, -3.5, 0.2, -7.5, 0.1);
+        assetTag(-3.5, 0.25, -7.24, 0, 43);
+        box(0.5, 0.35, 0.45, 0x8a6538, -2.8, 0.175, -7.0, -0.15);
+        assetTag(-2.8, 0.2, -6.77, 0, 44);
+        const presNW = makePerson({ cloth: 0x20283a });
+        presNW.position.set(-6.1, 0, -9.3);
+        presNW.rotation.y = 0.4;
+        room.add(presNW);
+        presNW.userData.rArm.rotation.z = -0.85;
+        presNW.userData.rArm.rotation.x = 0.35;
+        /* Audit west wall display + work table, verification activity */
+        const audTV = new THREE.Group();
+        audTV.position.set(-14.9, 2.1, 0.8);
+        room.add(audTV);
+        const audHouse = new THREE.Mesh(
+          new THREE.BoxGeometry(0.09, 2.16, 3.56),
+          M(0x11151c, 0.4),
+        );
+        audTV.add(audHouse);
+        const audMount = new THREE.Mesh(
+          new THREE.BoxGeometry(0.12, 0.4, 0.4),
+          M(0x2a2f38, 0.5),
+        );
+        audMount.position.set(-0.04, 0, 0);
+        audTV.add(audMount);
+        const audBezel = new THREE.Mesh(
+          new THREE.BoxGeometry(0.02, 2.1, 3.5),
+          M(0x0b1220, 0.4),
+        );
+        audBezel.position.x = 0.05;
+        audTV.add(audBezel);
+        const audScreen = planeTexture(auditTexture(), 3.4, 2.0, true);
+        audScreen.position.x = 0.065;
+        audScreen.rotation.y = Math.PI / 2;
+        audTV.add(audScreen);
+        tableT(-12.8, 0.8, 1.6, 3.2);
+        openLaptop(-13.3, 1.3, Math.PI / 2, lapScreenTex(), 0.825);
+        const audQR = planeTexture(qrTexture(51), 0.12, 0.12, true);
+        audQR.rotation.x = -Math.PI / 2;
+        audQR.position.set(-13.1, 0.828, 1.5);
+        room.add(audQR);
+        const audReport = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.4, 0.55),
+          new THREE.MeshBasicMaterial({ map: reportTexture() }),
+        );
+        audReport.rotation.set(-Math.PI / 2, 0, 0.08);
+        audReport.position.set(-13.2, 0.843, 0.6);
+        room.add(audReport);
+        box(0.44, 0.015, 0.6, 0x2a2f38, -13.2, 0.833, 0.6, 0);
+        const audPen = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.008, 0.008, 0.14, 8),
+          M(0x11151c, 0.6),
+        );
+        audPen.rotation.x = Math.PI / 2;
+        audPen.position.set(-13.1, 0.851, 0.75);
+        room.add(audPen);
+        box(0.22, 0.03, 0.3, 0x3f5a78, -13.3, 0.84, -0.5, 0);
+        box(0.08, 0.02, 0.16, 0x0d1724, -13.3, 0.865, -0.5, 0);
+        box(0.9, 1.1, 0.45, 0x37424f, -12.5, 0.55, -2.8, 0);
+        box(0.09, 0.32, 0.24, 0x3f5a78, -12.7, 1.26, -2.8, 0.05);
+        box(0.09, 0.32, 0.24, 0x2c3a4d, -12.55, 1.26, -2.8, -0.04);
+        box(0.09, 0.32, 0.24, 0x2ec27a, -12.4, 1.26, -2.8, 0.02);
+        const adminW = makePerson({ cloth: 0x101722 });
+        adminW.position.set(-14.0, 0, 0.8);
+        adminW.rotation.y = Math.PI / 2;
+        room.add(adminW);
+        const audTab = new THREE.Group();
+        const audTabBody = new THREE.Mesh(
+          new THREE.BoxGeometry(0.26, 0.34, 0.02),
+          M(0x0d1724, 0.4),
+        );
+        audTab.add(audTabBody);
+        const audTabScr = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.22, 0.3),
+          new THREE.MeshBasicMaterial({ map: auditTabTex() }),
+        );
+        audTabScr.position.z = 0.012;
+        audTab.add(audTabScr);
+        audTab.position.set(-13.72, 0.78, 1.08);
+        audTab.rotation.set(0, Math.PI / 2, 0);
+        room.add(audTab);
+        adminW.userData.lArm.rotation.set(-1.2, 0, 0.1);
+        const audVer = makePerson({ cloth: 0x3a4a5c });
+        audVer.position.set(-14.0, 0, -0.9);
+        audVer.rotation.y = Math.PI / 2 + 0.2;
+        room.add(audVer);
+        const docW = planeTexture(
+          canvasTex(
+            function (x, w, h) {
+              x.fillStyle = "#fbfaf6";
+              x.fillRect(0, 0, w, h);
+              x.fillStyle = "#173d2b";
+              x.font = "700 20px Arial";
+              x.fillText("ASSETRACK", 18, 28);
+              x.fillStyle = "#0b1b2b";
+              x.font = "700 28px Arial";
+              x.fillText("LAPORAN ASET", 18, 65);
+              x.strokeStyle = "#b5c0c9";
+              x.lineWidth = 1;
+              for (let i = 0; i < 7; i++) {
+                x.beginPath();
+                x.moveTo(18, 90 + i * 28);
+                x.lineTo(w - 18, 90 + i * 28);
+                x.stroke();
+              }
+            },
+            240,
+            320,
+          ),
+          0.32,
+          0.43,
+          true,
+        );
+        docW.position.set(0.27, 0.28, 0.24);
+        docW.rotation.set(0.08, -0.2, 0);
+        adminW.userData.rArm.add(docW);
+        adminW.userData.rArm.rotation.x = -0.55;
+        adminW.userData.rArm.rotation.z = -0.2;
+        /* Camera shots: opening faces WEST (-X); Asset SE, Maintenance NE, Depreciation SW, Monitoring NW */
+        room.traverse((o) => {
+          if (
+            o.isMesh &&
+            o.material &&
+            o.material.isMeshStandardMaterial &&
+            !o.userData.noCast
+          ) {
+            o.castShadow = true;
+            o.receiveShadow = true;
+          }
+        });
+        const shots = [
+          {
+            x: 13.2,
+            y: 3.5,
+            z: 1.0,
+            tx: -3,
+            ty: 1.0,
+            tz: 1.0,
+            label: "01 - OVERVIEW",
+            info: "facing west",
+          },
+          {
+            x: 8.8,
+            y: 1.9,
+            z: 6.3,
+            tx: 6.3,
+            ty: 1.05,
+            tz: 7.0,
+            label: "02 - ASSET MANAGEMENT",
+            info: "projector + QR hero",
+          },
+          {
+            x: 7.9,
+            y: 1.75,
+            z: 1.9,
+            tx: 9.55,
+            ty: 0.9,
+            tz: 3.35,
+            label: "03 - ASSET BORROWING",
+            info: "tablet + laptop QR",
+          },
+          {
+            x: 5.2,
+            y: 2.0,
+            z: -4.8,
+            tx: 8.5,
+            ty: 2.1,
+            tz: -7.2,
+            label: "04 - MAINTENANCE",
+            info: "reserved NE",
+          },
+          {
+            x: -5.0,
+            y: 2.0,
+            z: 3.8,
+            tx: -8,
+            ty: 1.6,
+            tz: 7.5,
+            label: "05 - DEPRECIATION",
+            info: "reserved SW",
+          },
+          {
+            x: -4.0,
+            y: 2.2,
+            z: -3.5,
+            tx: -9,
+            ty: 1.8,
+            tz: -7,
+            label: "06 - MONITORING",
+            info: "reserved NW",
+          },
+          {
+            x: -10.5,
+            y: 2.0,
+            z: 0,
+            tx: -14.8,
+            ty: 1.7,
+            tz: 0,
+            label: "07 - AUDIT TRAIL",
+            info: "reserved W",
+          },
+        ];
+        let curF = 0;
+        let cur = {
+          x: shots[0].x,
+          y: shots[0].y,
+          z: shots[0].z,
+          tx: shots[0].tx,
+          ty: shots[0].ty,
+          tz: shots[0].tz,
+        };
+        let tgt = {
+          x: cur.x,
+          y: cur.y,
+          z: cur.z,
+          tx: cur.tx,
+          ty: cur.ty,
+          tz: cur.tz,
+        };
+        let tgtFloat = 0;
+        let curFloat = 0;
+        let zoneTime = 0;
+        const sections = [...document.querySelectorAll("[data-cam]")];
+        const progress = document.getElementById("progress");
+        sections.forEach(function () {
+          const i = document.createElement("i");
+          progress.appendChild(i);
+        });
+        function updateTargets() {
+          const max = document.body.scrollHeight - innerHeight,
+            p = max <= 0 ? 0 : clamp(scrollY / max, 0, 1),
+            f = p * (shots.length - 1),
+            idx = Math.min(Math.floor(f), shots.length - 2),
+            t = f - idx,
+            a = shots[idx],
+            b = shots[Math.min(idx + 1, shots.length - 1)];
+          curF = f;
+          const e = t * t * (3 - 2 * t);
+          if (idx === 3) {
+            const u = 1 - e;
+            const cx = 0,
+              cy = 2.6,
+              cz = -4.5,
+              qx = 0,
+              qy = 1.2,
+              qz = 0;
+            tgt.x = u * u * a.x + 2 * u * e * cx + e * e * b.x;
+            tgt.y = u * u * a.y + 2 * u * e * cy + e * e * b.y;
+            tgt.z = u * u * a.z + 2 * u * e * cz + e * e * b.z;
+            tgt.tx = u * u * a.tx + 2 * u * e * qx + e * e * b.tx;
+            tgt.ty = u * u * a.ty + 2 * u * e * qy + e * e * b.ty;
+            tgt.tz = u * u * a.tz + 2 * u * e * qz + e * e * b.tz;
+          } else {
+            for (const k of ["x", "y", "z", "tx", "tz"])
+              tgt[k] = lerp(a[k], b[k], e);
+            tgt.ty = lerp(a.ty, b.ty, e);
+          }
+          const dA = Math.abs(f - 1);
+          tgtFloat = clamp(1 - (dA - 0.3) / 0.3, 0, 1);
+          const active = Math.min(Math.round(f), sections.length - 1);
+          document.querySelectorAll("#progress i").forEach(function (el, i) {
+            el.style.setProperty("--fill", i <= active ? 1 : 0);
+            el.classList.toggle("on", i === active);
+          });
+          const lab = shots[Math.round(f)] || shots[0];
+          document.getElementById("camMode").textContent = lab.label;
+          document.getElementById("camInfo").textContent = lab.info;
+        }
+        window.addEventListener("scroll", updateTargets, { passive: true });
+        updateTargets();
+        camera.position.set(cur.x, cur.y, cur.z);
+        camera.lookAt(cur.tx, cur.ty, cur.tz);
+        const io = new IntersectionObserver(
+          function (es) {
+            es.forEach(function (e) {
+              if (e.isIntersecting) e.target.classList.add("rv-in");
+            });
+          },
+          { threshold: 0.13 },
+        );
+        document.querySelectorAll("[data-rv]").forEach(function (e) {
+          io.observe(e);
+        });
+        window.addEventListener("resize", function () {
+          renderer.setSize(vw(), vh(), true);
+          camera.aspect = vw() / vh();
+          camera.updateProjectionMatrix();
+        });
+        let last = performance.now();
+        function tick(now) {
+          const dt = Math.min(0.05, (now - last) / 1000);
+          last = now;
+          cur.x = damp(cur.x, tgt.x, 3.2, dt);
+          cur.y = damp(cur.y, tgt.y, 3.2, dt);
+          cur.z = damp(cur.z, tgt.z, 3.2, dt);
+          cur.tx = damp(cur.tx, tgt.tx, 3.0, dt);
+          cur.ty = damp(cur.ty, tgt.ty, 3.0, dt);
+          cur.tz = damp(cur.tz, tgt.tz, 3.0, dt);
+          if (!isFinite(cur.x + cur.y + cur.z + cur.tx + cur.ty + cur.tz)) {
+            cur.x = tgt.x;
+            cur.y = tgt.y;
+            cur.z = tgt.z;
+            cur.tx = tgt.tx;
+            cur.ty = tgt.ty;
+            cur.tz = tgt.tz;
+          }
+          camera.position.set(cur.x, cur.y, cur.z);
+          camera.lookAt(cur.tx, cur.ty, cur.tz);
+          curFloat = damp(curFloat, tgtFloat, 4.0, dt);
+          if (Math.abs(curFloat - tgtFloat) < 0.01) curFloat = tgtFloat;
+          updateFloatingScreen(floatAsset, curFloat);
+          const inZone = curF > 1.55 && curF < 2.75;
+          if (inZone) {
+            zoneTime += dt;
+            if (zoneTime > 5.0) {
+              setDeviceScreenState(device, "borrow-form");
+            } else {
+              setDeviceScreenState(device, "scanning");
+            }
+          } else {
+            zoneTime = 0;
+            setDeviceScreenState(device, "idle");
+          }
+          if (device.getState() === "scanning") {
+            device.scanLine.visible = true;
+            device.scanLine.position.y = Math.sin(now * 0.004) * 0.11;
+            device.scanLine.material.opacity =
+              0.5 + Math.sin(now * 0.008) * 0.35;
+          } else {
+            device.scanLine.visible = false;
+          }
+          renderer.render(scene, camera);
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })();
+    </script>
+  </body>
+</html>
