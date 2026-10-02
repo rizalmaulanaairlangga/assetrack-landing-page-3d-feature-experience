@@ -281,6 +281,7 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      /* Frozen layout: info-card position per section, verified against all 7 camera endpoints on wide + square viewports. See CAMERA_LOCK.md. */
       .sec-left {
         justify-content: flex-end;
         align-items: flex-start;
@@ -2642,6 +2643,7 @@
             o.receiveShadow = true;
           }
         });
+        /* Frozen camera: endpoints, scroll mapping, easing and damping tuned per shot. See CAMERA_LOCK.md. */
         const shots = [
           {
             x: 13.2,
