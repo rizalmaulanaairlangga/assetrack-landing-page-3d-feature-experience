@@ -22,7 +22,7 @@ aspect ratios (labels, console, subject-vs-card projection) before merging.
 
 ## 2. Frozen camera movement
 
-- `PerspectiveCamera(48, aspect, 0.1, 220)`, opening faces west.
+- `PerspectiveCamera(48, aspect, 0.1, 120)`, opening faces west.
 - Scroll-progress mapping + smoothstep easing + quadratic blend on the
   shot-03→04 segment in `updateTargets()`.
 - Damping in `tick()`: position 2.4, target 2.2, floating screen 4.0,
@@ -75,3 +75,19 @@ DO NOT apply it directly. Warn the user that it touches a locked
 endpoint, name the shot, and wait for explicit confirmation. Never
 treat such a request as implicit approval. A movement change that
 shifts an endpoint counts as an endpoint change.
+
+## 7. Responsive camera tables (tablet / mobile)
+
+- Desktop table (`SHOTS_DESKTOP`) is LOCKED per §1. Byte-identical values.
+- `SHOTS_TABLET` (768–1023px, FOV 52) and `SHOTS_MOBILE` (<768px,
+  FOV 60) are dedicated per-tier compositions aimed at each feature's
+  focal objects. Same order, count, scroll mapping, timing, and labels.
+- Tier switches only swap the active table + FOV on resize; scroll and
+  animation systems are shared. Desktop behavior is only reachable and
+  only used at >= 1024px, never modified by responsive code.
+- Mobile motion principle: horizontal/depth-first dolly. Endpoints keep
+  the desktop route shape (same view directions, ~85% distance) with
+  retargeted centers, so transitions stay smooth without orbit feel.
+  Mobile overview is a wide establishing shot; borrowing is shot from
+  the north (employee front view) so the tablet/QR/laptop stay visible;
+  Asset Management faces due west for a frontal asset-panel read.

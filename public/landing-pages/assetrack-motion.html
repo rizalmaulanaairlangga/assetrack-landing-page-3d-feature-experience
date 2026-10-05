@@ -844,6 +844,7 @@
         align-items: center;
         gap: 2px;
         padding: 3px;
+        margin-left: auto;
         border-radius: 999px;
         color: #33475c;
         background: rgba(255, 255, 255, 0.5);
@@ -1065,6 +1066,86 @@
         }
         .glass-card {
           max-width: 100%;
+        }
+      }
+      /* Tablet composition (768-1023px): intermediate cinematic framing.
+         Side panels are kept, slightly narrowed to protect the focal view. */
+      @media (min-width: 768px) and (max-width: 1023px) {
+        .glass-card {
+          max-width: 470px;
+          padding: 24px 26px;
+        }
+        .hero-top {
+          max-width: 560px;
+        }
+      }
+      /* Mobile composition (<768px): bottom glass panel showcase mode.
+         The 3D focal area stays in the upper viewport while the feature
+         panel docks at the bottom. Desktop rules above are untouched. */
+      @media (max-width: 767px) {
+        section.sec-left,
+        section.sec-right {
+          justify-content: flex-end;
+          align-items: stretch;
+          padding: 0 calc(var(--pad) * 0.6) 2vh;
+        }
+        section[data-cam="1"],
+        section[data-cam="2"],
+        section[data-cam="3"],
+        section[data-cam="4"],
+        section[data-cam="5"],
+        section[data-cam="6"] {
+          justify-content: flex-end;
+          align-items: stretch;
+          padding: 0 calc(var(--pad) * 0.6) 2vh;
+        }
+        .glass-card {
+          max-width: 100%;
+          max-height: 38vh;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          padding: 20px 20px 22px;
+          border-radius: 16px;
+        }
+        .glass-card .h-sec {
+          font-size: clamp(22px, 6vw, 28px);
+        }
+        .glass-card .body-lg {
+          margin-top: 10px;
+          font-size: 14px;
+          line-height: 1.62;
+        }
+        .kicker {
+          margin-bottom: 12px;
+          padding: 6px 12px;
+        }
+        .hero-pin {
+          justify-content: flex-end;
+          padding-bottom: 4vh;
+        }
+        .hero-top {
+          max-width: 100%;
+        }
+        .hero-content {
+          padding: 24px 22px 22px;
+        }
+        .h-hero {
+          font-size: clamp(28px, 8.5vw, 34px);
+        }
+        .hero-top .body-lg {
+          font-size: 14px;
+        }
+        .chip {
+          padding: 6px 10px;
+        }
+        .cta-row {
+          margin-top: 16px;
+        }
+        .cam-label {
+          bottom: auto;
+          top: calc(var(--nav-h) + 10px);
+          font-size: 9px;
+          padding: 7px 11px;
         }
       }
     </style>
@@ -2199,7 +2280,7 @@
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x142233);
         scene.fog = new THREE.FogExp2(0x142233, 0.01);
-        const camera = new THREE.PerspectiveCamera(48, vw() / vh(), 0.1, 220);
+        const camera = new THREE.PerspectiveCamera(48, vw() / vh(), 0.1, 120);
         scene.add(camera);
         const hemi = new THREE.HemisphereLight(0xfff6e6, 0x1a2a3a, 1.0);
         scene.add(hemi);
@@ -2652,7 +2733,7 @@
           s.rotation.y = ry;
           room.add(s);
           const backing = new THREE.Mesh(
-            new THREE.BoxGeometry(pw + 0.1, ph + 0.1, 0.04),
+            new THREE.BoxGeometry(pw + 0.1, ph + 0.1, 0.02),
             M(0x16324a, 0.6),
           );
           backing.position.set(x, y, z);
@@ -3407,6 +3488,7 @@
           const g = new THREE.Group();
           g.position.set(x, y, z);
           g.rotation.y = ry;
+          g.translateZ(0.012);
           room.add(g);
           const back = new THREE.Mesh(
             new THREE.PlaneGeometry(0.16, 0.16),
@@ -3414,7 +3496,7 @@
           );
           g.add(back);
           const code = planeTexture(qrTexture(seed), 0.13, 0.13, true);
-          code.position.z = 0.002;
+          code.position.z = 0.004;
           g.add(code);
           return g;
         }
@@ -3488,13 +3570,13 @@
           new THREE.PlaneGeometry(0.8, 0.4),
           new THREE.MeshBasicMaterial({ map: floorMapTex() }),
         );
-        monMap.position.set(-9.3, 1.35, -7.315);
+        monMap.position.set(-9.3, 1.35, -7.305);
         room.add(monMap);
         const monAct = new THREE.Mesh(
           new THREE.PlaneGeometry(0.8, 0.4),
           new THREE.MeshBasicMaterial({ map: activityTex() }),
         );
-        monAct.position.set(-7.7, 1.35, -7.315);
+        monAct.position.set(-7.7, 1.35, -7.305);
         room.add(monAct);
         openLaptop(-8.5, -7.0, 0, lapScreenTex(), 0.78);
         box(0.22, 0.45, 0.45, 0x1c2733, -2.2, 0.225, -10.0, 0);
@@ -3931,8 +4013,12 @@
           const mb = document.getElementById("menuBtn");
           if (mb) mb.setAttribute("aria-label", menuAria(mb.classList.contains("open")));
           for (let si = 0; si < shots.length; si++) {
-            shots[si].label = t("label" + si);
-            shots[si].info = t("info" + si);
+            const lb = t("label" + si);
+            const in4 = t("info" + si);
+            for (let ti = 0; ti < SHOT_TABLES.length; ti++) {
+              SHOT_TABLES[ti][si].label = lb;
+              SHOT_TABLES[ti][si].info = in4;
+            }
           }
           const lid = document.getElementById("langId");
           const len = document.getElementById("langEn");
@@ -4002,7 +4088,7 @@
            mapping that lands on it), warn the user first and wait for
            explicit confirmation. See CAMERA_LOCK.md.
            ============================================================ */
-        const shots = [
+        const SHOTS_DESKTOP = [
           {
             // [LOCKED CAMERA ENDPOINT] 01 Overview. Do not change.
             x: 13.2,
@@ -4083,6 +4169,47 @@
             info: "verification desk",
           },
         ];
+        /* Responsive camera tables. DESKTOP above is LOCKED and untouched.
+           TABLET (768-1023px) is an intermediate cinematic composition.
+           MOBILE (<768px) is a dedicated feature-showcase composition aimed
+           at each feature's focal objects. Same order, same count, same
+           scroll mapping — only positions/targets/FOV differ per tier. */
+        const SHOTS_TABLET = [
+          { x: 12.96, y: 3.5, z: 0, tx: -3, ty: 1.0, tz: 1.0, label: "01 — OVERVIEW", info: "office overview" },
+          { x: 8.55, y: 1.88, z: 5.94, tx: 6.55, ty: 1.2, tz: 6.5, label: "02 — ASSET MANAGEMENT", info: "projector + QR hero" },
+          { x: 10.6, y: 1.6, z: 1.7, tx: 9.5, ty: 1.1, tz: 3.5, label: "03 — ASSET BORROWING", info: "tablet + laptop QR" },
+          { x: 7.46, y: 1.72, z: -8.98, tx: 10.2, ty: 1.9, tz: -11.0, label: "04 — MAINTENANCE", info: "AC unit + technician" },
+          { x: -5.3, y: 1.97, z: 7.99, tx: -7.7, ty: 1.65, tz: 10.95, label: "05 — DEPRECIATION", info: "financial display" },
+          { x: -8.2, y: 2.0, z: -1.6, tx: -8.6, ty: 1.4, tz: -8.2, label: "06 — MONITORING", info: "control room" },
+          { x: -11.01, y: 1.94, z: 0.8, tx: -14.45, ty: 1.7, tz: 0.8, label: "07 — AUDIT TRAIL", info: "verification desk" },
+        ];
+        const SHOTS_MOBILE = [
+          { x: 12, y: 3.6, z: 10.5, tx: -5, ty: 0.8, tz: -1, label: "01 — OVERVIEW", info: "office overview" },
+          { x: 9.6, y: 1.7, z: 6.4, tx: 6.9, ty: 1.15, tz: 6.4, label: "02 — ASSET MANAGEMENT", info: "projector + QR hero" },
+          { x: 9.3, y: 1.7, z: 1.0, tx: 9.5, ty: 1.0, tz: 3.8, label: "03 — ASSET BORROWING", info: "tablet + laptop QR" },
+          { x: 7.3, y: 1.7, z: -8.9, tx: 10.1, ty: 1.8, tz: -10.9, label: "04 — MAINTENANCE", info: "AC unit + technician" },
+          { x: -5.2, y: 2.0, z: 7.8, tx: -7.7, ty: 1.65, tz: 10.95, label: "05 — DEPRECIATION", info: "financial display" },
+          { x: -8.6, y: 1.9, z: -2.8, tx: -8.5, ty: 1.4, tz: -8.0, label: "06 — MONITORING", info: "control room" },
+          { x: -10.8, y: 2.0, z: 0.8, tx: -14.45, ty: 1.7, tz: 0.8, label: "07 — AUDIT TRAIL", info: "verification desk" },
+        ];
+        const SHOT_TABLES = [SHOTS_DESKTOP, SHOTS_TABLET, SHOTS_MOBILE];
+        const TIER_FOV = [48, 52, 60];
+        let shots = SHOTS_DESKTOP;
+        let camFov = 48;
+        function currentTier() {
+          const w = vw();
+          return w >= 1024 ? 0 : w >= 768 ? 1 : 2;
+        }
+        function applyTier() {
+          const t = currentTier();
+          shots = SHOT_TABLES[t];
+          if (TIER_FOV[t] !== camFov) {
+            camFov = TIER_FOV[t];
+            camera.fov = camFov;
+            camera.updateProjectionMatrix();
+          }
+        }
+        applyTier();
         let curF = 0;
         let cur = {
           x: shots[0].x,
@@ -4292,6 +4419,7 @@
         window.addEventListener("resize", function () {
           renderer.setSize(vw(), vh(), true);
           camera.aspect = vw() / vh();
+          applyTier();
           camera.updateProjectionMatrix();
         });
         let last = performance.now();
