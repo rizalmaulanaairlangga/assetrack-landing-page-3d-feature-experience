@@ -12,7 +12,7 @@
         --dim: #a6b7c8;
         --muted: #6f8194;
         --line: rgba(234, 241, 247, 0.1);
-        --accent: #2ec27a;
+        --accent: #3aa0e8;
         --blue: #4b8dff;
         --pad: clamp(20px, 3.4vw, 56px);
         --nav-h: 64px;
@@ -130,7 +130,7 @@
         inset: -30%;
         background: radial-gradient(
           circle at 50% 50%,
-          rgba(46, 194, 122, 0.22),
+          rgba(58, 160, 232, 0.22),
           transparent 62%
         );
         opacity: 0;
@@ -140,11 +140,11 @@
       }
       #modeBtn:hover {
         transform: scale(1.07);
-        border-color: rgba(46, 194, 122, 0.75);
+        border-color: rgba(58, 160, 232, 0.75);
         box-shadow:
-          0 0 0 1px rgba(46, 194, 122, 0.25),
-          0 6px 22px rgba(46, 194, 122, 0.22);
-        color: #0f7a4e;
+          0 0 0 1px rgba(58, 160, 232, 0.25),
+          0 6px 22px rgba(58, 160, 232, 0.22);
+        color: #1b5faa;
       }
       body.night #modeBtn:hover {
         color: var(--accent);
@@ -186,7 +186,7 @@
       #modeBtn .ripple {
         position: absolute;
         border-radius: 50%;
-        background: rgba(46, 194, 122, 0.32);
+        background: rgba(58, 160, 232, 0.32);
         transform: scale(0);
         animation: modeRipple 0.65s var(--ease) forwards;
         pointer-events: none;
@@ -244,7 +244,7 @@
         border-radius: 50%;
         background: radial-gradient(
           circle at 50% 50%,
-          rgba(46, 194, 122, 0.2),
+          rgba(58, 160, 232, 0.2),
           transparent 68%
         );
         opacity: 0;
@@ -253,9 +253,9 @@
       }
       #menuBtn:hover {
         transform: scale(1.07);
-        border-color: rgba(46, 194, 122, 0.7);
-        box-shadow: 0 0 0 1px rgba(46, 194, 122, 0.22), 0 6px 22px rgba(46, 194, 122, 0.18);
-        color: #0f7a4e;
+        border-color: rgba(58, 160, 232, 0.7);
+        box-shadow: 0 0 0 1px rgba(58, 160, 232, 0.22), 0 6px 22px rgba(58, 160, 232, 0.18);
+        color: #1b5faa;
       }
       body.night #menuBtn:hover {
         color: var(--accent);
@@ -362,7 +362,7 @@
         );
         -webkit-backdrop-filter: blur(28px) saturate(1.1);
         backdrop-filter: blur(28px) saturate(1.1);
-        border-left-color: rgba(46, 194, 122, 0.28);
+        border-left-color: rgba(58, 160, 232, 0.28);
         box-shadow: -24px 0 60px rgba(0, 0, 0, 0.55);
       }
       .menu-head {
@@ -372,7 +372,7 @@
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.24em;
-        color: #0f7a4e;
+        color: #1b5faa;
         margin-bottom: 14px;
         padding: 0 6px;
       }
@@ -472,7 +472,7 @@
         color: #0b1b2b;
       }
       .menu-list button:not(.active):hover b {
-        color: #0f7a4e;
+        color: #1b5faa;
       }
       .menu-list button:not(.active):hover .m-arrow {
         opacity: 1;
@@ -483,7 +483,7 @@
         outline-offset: 2px;
       }
       .menu-list button.active {
-        background: rgba(46, 194, 122, 0.12);
+        background: rgba(58, 160, 232, 0.12);
         border-left-color: var(--accent);
         color: #0b1b2b;
         transition:
@@ -491,14 +491,14 @@
           transform 0.42s var(--ease);
       }
       .menu-list button.active:hover {
-        background: rgba(46, 194, 122, 0.12);
+        background: rgba(58, 160, 232, 0.12);
         border-left-color: var(--accent);
         color: #0b1b2b;
         transform: none;
       }
       .menu-list button.active b,
       .menu-list button.active:hover b {
-        color: #0f7a4e;
+        color: #1b5faa;
       }
       .menu-list button.active .m-arrow,
       .menu-list button.active:hover .m-arrow {
@@ -511,7 +511,7 @@
         height: 7px;
         border-radius: 50%;
         background: var(--accent);
-        box-shadow: 0 0 10px rgba(46, 194, 122, 0.8);
+        box-shadow: 0 0 10px rgba(58, 160, 232, 0.8);
         margin-left: 6px;
         flex: 0 0 auto;
       }
@@ -531,7 +531,7 @@
       }
       body.night .menu-list button.active,
       body.night .menu-list button.active:hover {
-        background: rgba(46, 194, 122, 0.14);
+        background: rgba(58, 160, 232, 0.14);
         color: #ffffff;
         transform: none;
       }
@@ -558,12 +558,12 @@
         border-radius: 2px;
         background: var(--accent);
         display: inline-block;
-        box-shadow: 0 0 10px rgba(46, 194, 122, 0.7);
+        box-shadow: 0 0 10px rgba(58, 160, 232, 0.7);
         flex: 0 0 auto;
       }
       .brand span {
         font-weight: 500;
-        color: #0f7a4e;
+        color: #1b5faa;
         font-size: 10px;
         letter-spacing: 0.2em;
         transition: color 0.42s ease;
@@ -597,7 +597,7 @@
         height: 6px;
         border-radius: 50%;
         background: var(--accent);
-        box-shadow: 0 0 10px rgba(46, 194, 122, 0.7);
+        box-shadow: 0 0 10px rgba(58, 160, 232, 0.7);
         flex: 0 0 auto;
       }
       .hero,
@@ -661,7 +661,7 @@
         padding: 34px 36px 30px;
       }
       .hero-top .eyebrow {
-        color: #0f7a4e;
+        color: #1b5faa;
       }
       body.night .hero-top .eyebrow {
         color: var(--accent);
@@ -729,12 +729,12 @@
         font-weight: 700;
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: #4fe08f;
+        color: #62d2ec;
       }
       body.night .kicker {
         background: rgba(8, 14, 24, 0.72);
-        border-color: rgba(46, 194, 122, 0.45);
-        box-shadow: 0 0 14px rgba(46, 194, 122, 0.22);
+        border-color: rgba(58, 160, 232, 0.45);
+        box-shadow: 0 0 14px rgba(58, 160, 232, 0.22);
       }
       body.night .kicker b {
         color: var(--accent);
@@ -820,7 +820,7 @@
         letter-spacing: 0.08em;
         text-transform: uppercase;
         text-decoration: none;
-        box-shadow: 0 10px 28px rgba(46, 194, 122, 0.35);
+        box-shadow: 0 10px 28px rgba(58, 160, 232, 0.35);
         transition:
           transform 0.25s ease,
           box-shadow 0.25s ease,
@@ -828,8 +828,8 @@
       }
       .cta-btn:hover {
         transform: translateY(-2px);
-        background: #35d586;
-        box-shadow: 0 14px 34px rgba(46, 194, 122, 0.45);
+        background: #5ab8f0;
+        box-shadow: 0 14px 34px rgba(58, 160, 232, 0.45);
       }
       .cta-btn:focus-visible {
         outline: 2px solid #04120b;
@@ -918,7 +918,7 @@
         backdrop-filter: blur(8px);
       }
       .cam-label b {
-        color: #0f7a4e;
+        color: #1b5faa;
       }
       body.night .cam-label {
         color: #cdd6e2;
@@ -1883,7 +1883,7 @@
             (x, w, h) => {
               x.fillStyle = "#101d2b";
               x.fillRect(0, 0, w, h);
-              x.strokeStyle = "rgba(46,194,122,.5)";
+              x.strokeStyle = "rgba(58,160,232,.5)";
               x.lineWidth = 3;
               x.setLineDash([14, 10]);
               x.strokeRect(14, 14, w - 28, h - 28);
@@ -1912,7 +1912,7 @@
           const glow = new THREE.Mesh(
             new THREE.PlaneGeometry(w + 0.22, h + 0.22),
             new THREE.MeshBasicMaterial({
-              color: 0x2ec27a,
+              color: 0x3aa0e8,
               transparent: true,
               opacity: 0.0,
               blending: THREE.AdditiveBlending,
@@ -2098,7 +2098,7 @@
           const scan = new THREE.Mesh(
             new THREE.PlaneGeometry(0.22, 0.012),
             new THREE.MeshBasicMaterial({
-              color: 0x3fdc8a,
+              color: 0x37c8e8,
               transparent: true,
               opacity: 0.9,
             }),
@@ -2133,7 +2133,7 @@
               x.fillText("Tanggal", 20, 218);
               x.fillStyle = "#0b1b2b";
               x.fillText("27/09/2026", 20, 238);
-              x.fillStyle = "#2ec27a";
+              x.fillStyle = "#3aa0e8";
               x.fillRect(20, 262, 216, 44);
               x.fillStyle = "#fff";
               x.font = "700 16px Arial";
@@ -2141,10 +2141,10 @@
             } else {
               x.fillStyle = "#17251f";
               x.fillRect(0, 0, 256, 340);
-              x.fillStyle = "#3fdc8a";
+              x.fillStyle = "#37c8e8";
               x.font = "700 20px Arial";
               x.fillText(state === "scanning" ? "SCAN" : "Scan Asset", 22, 34);
-              x.strokeStyle = "#3fdc8a";
+              x.strokeStyle = "#37c8e8";
               x.lineWidth = 5;
               x.strokeRect(25, 58, 206, 180);
               drawQR(x, 48, 80, 160, state === "scanning" ? 31 : 7);
@@ -2595,7 +2595,7 @@
             x.moveTo(40, 110);
             x.lineTo(w - 120, 110);
             x.stroke();
-            x.fillStyle = "#2ec27a";
+            x.fillStyle = "#3aa0e8";
             x.fillRect(40, 140, 90, 26);
           },
           512,
@@ -2637,7 +2637,7 @@
               x.font = "700 44px Arial";
               x.textBaseline = "middle";
               x.fillText(text, 36, h / 2 - 6);
-              x.fillStyle = "#2ec27a";
+              x.fillStyle = "#3aa0e8";
               x.fillRect(36, h - 30, 120, 6);
             },
             512,
@@ -2737,7 +2737,7 @@
         box(0.19, 0.005, 0.26, 0x9fc4e8, 1.35, 0.798, -0.35, 0.2);
         box(0.34, 0.02, 0.25, 0x8a6538, 0.4, 0.79, 1.3, -0.2);
         box(0.28, 0.025, 0.2, 0xe7edf2, 0.42, 0.812, 1.28, 0.12);
-        cyl(0.045, 0.04, 0.11, 0x2ec27a, -0.05, 0.835, 1.15, 10);
+        cyl(0.045, 0.04, 0.11, 0x3aa0e8, -0.05, 0.835, 1.15, 10);
         function tableR(x, z, r) {
           r = r || 0.95;
           const k = r / 0.95;
@@ -2856,7 +2856,7 @@
         for (let bi = 0; bi < 3; bi++) {
           const b = new THREE.Mesh(
             new THREE.BoxGeometry(0.05, 0.015, 0.05),
-            M(0x2ec27a, 0.5),
+            M(0x3aa0e8, 0.5),
           );
           b.position.set(-0.1 + bi * 0.1, 0.19, -0.14);
           proj.add(b);
@@ -2877,7 +2877,7 @@
         const pglow = new THREE.Mesh(
           new THREE.PlaneGeometry(0.34, 0.34),
           new THREE.MeshBasicMaterial({
-            color: 0x2ec27a,
+            color: 0x3aa0e8,
             transparent: true,
             opacity: 0.1,
             blending: THREE.AdditiveBlending,
@@ -2929,7 +2929,7 @@
         room.add(acVent);
         const acLed = new THREE.Mesh(
           new THREE.BoxGeometry(0.14, 0.03, 0.02),
-          new THREE.MeshBasicMaterial({ color: 0x2ec27a }),
+          new THREE.MeshBasicMaterial({ color: 0x3aa0e8 }),
         );
         acLed.position.set(10.0, 2.56, -11.545);
         room.add(acLed);
@@ -3155,11 +3155,11 @@
         pen2.rotation.x = Math.PI / 2;
         pen2.position.set(-8.5, 0.833, 8.1);
         room.add(pen2);
-        cyl(0.045, 0.04, 0.11, 0x2ec27a, -8.55, 0.88, 7.95, 10);
+        cyl(0.045, 0.04, 0.11, 0x3aa0e8, -8.55, 0.88, 7.95, 10);
         box(2.4, 0.5, 0.4, 0x5c6a78, -9, 0.25, 11.72, 0);
         box(0.08, 0.3, 0.25, 0x3f5a78, -9.5, 0.65, 11.7, 0.06);
         box(0.08, 0.3, 0.25, 0x2c3a4d, -9.35, 0.65, 11.7, -0.05);
-        box(0.08, 0.3, 0.25, 0x2ec27a, -9.2, 0.65, 11.7, 0.03);
+        box(0.08, 0.3, 0.25, 0x3aa0e8, -9.2, 0.65, 11.7, 0.03);
         const depPres = makePerson({ cloth: 0x2c5f8a });
         depPres.position.set(-6.4, 0, 10.0);
         depPres.rotation.y = -Math.PI / 2;
@@ -3448,7 +3448,7 @@
           const led = new THREE.Mesh(
             ledGeo,
             new THREE.MeshBasicMaterial({
-              color: s % 2 ? 0xe0a53c : 0x2ec27a,
+              color: s % 2 ? 0xe0a53c : 0x3aa0e8,
             }),
           );
           led.position.set(-13.15, 0.35 + s * 0.28, -10.87);
@@ -3483,7 +3483,7 @@
         box(0.06, 0.03, 0.1, 0x11151c, -8.98, 0.84, -6.55, 0);
         box(0.06, 0.03, 0.1, 0x11151c, -7.38, 0.84, -6.55, 0);
         box(0.3, 0.02, 0.4, 0xf2f4f6, -9.9, 0.835, -6.6, 0.1);
-        cyl(0.045, 0.04, 0.11, 0x2ec27a, -7.0, 0.88, -6.6, 10);
+        cyl(0.045, 0.04, 0.11, 0x3aa0e8, -7.0, 0.88, -6.6, 10);
         const monMap = new THREE.Mesh(
           new THREE.PlaneGeometry(0.8, 0.4),
           new THREE.MeshBasicMaterial({ map: floorMapTex() }),
@@ -3560,7 +3560,7 @@
         box(0.9, 1.1, 0.45, 0x37424f, -12.5, 0.55, -2.8, 0);
         box(0.09, 0.32, 0.24, 0x3f5a78, -12.7, 1.26, -2.8, 0.05);
         box(0.09, 0.32, 0.24, 0x2c3a4d, -12.55, 1.26, -2.8, -0.04);
-        box(0.09, 0.32, 0.24, 0x2ec27a, -12.4, 1.26, -2.8, 0.02);
+        box(0.09, 0.32, 0.24, 0x3aa0e8, -12.4, 1.26, -2.8, 0.02);
         const adminW = makePerson({ cloth: 0x101722 });
         adminW.position.set(-14.0, 0, 0.8);
         adminW.rotation.y = Math.PI / 2;
