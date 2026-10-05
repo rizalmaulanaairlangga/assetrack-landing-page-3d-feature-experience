@@ -77,9 +77,25 @@
         align-items: center;
         gap: 14px;
         padding: 0 var(--pad);
-        background: rgba(7, 14, 22, 0.72);
-        backdrop-filter: blur(14px);
-        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.62);
+        -webkit-backdrop-filter: blur(20px) saturate(1.15);
+        backdrop-filter: blur(20px) saturate(1.15);
+        border-bottom: 1px solid rgba(23, 43, 58, 0.1);
+        box-shadow: 0 8px 30px rgba(23, 43, 58, 0.08);
+        color: #172b3a;
+        transition:
+          background 0.42s ease,
+          color 0.42s ease,
+          border-color 0.42s ease,
+          box-shadow 0.42s ease;
+      }
+      body.night .nav {
+        background: rgba(4, 8, 14, 0.72);
+        -webkit-backdrop-filter: blur(20px) saturate(1.1);
+        backdrop-filter: blur(20px) saturate(1.1);
+        border-bottom: 1px solid rgba(234, 241, 247, 0.12);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.38);
+        color: var(--bone);
       }
       #modeBtn {
         width: 44px;
@@ -88,15 +104,54 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: var(--bone);
-        background: transparent;
-        border: 1px solid var(--line);
+        color: #33475c;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(23, 43, 58, 0.16);
         border-radius: 50%;
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        transition:
+          transform 0.35s var(--ease),
+          border-color 0.35s ease,
+          background 0.42s ease,
+          color 0.35s ease,
+          box-shadow 0.35s ease;
+      }
+      body.night #modeBtn {
+        color: var(--bone);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(234, 241, 247, 0.16);
+      }
+      #modeBtn::before {
+        content: "";
+        position: absolute;
+        inset: -30%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(46, 194, 122, 0.22),
+          transparent 62%
+        );
+        opacity: 0;
+        transition: opacity 0.35s ease;
+        z-index: 0;
+        pointer-events: none;
       }
       #modeBtn:hover {
-        border-color: var(--accent);
+        transform: scale(1.07);
+        border-color: rgba(46, 194, 122, 0.75);
+        box-shadow:
+          0 0 0 1px rgba(46, 194, 122, 0.25),
+          0 6px 22px rgba(46, 194, 122, 0.22);
+        color: #0f7a4e;
+      }
+      body.night #modeBtn:hover {
         color: var(--accent);
+        background: rgba(255, 255, 255, 0.1);
+      }
+      #modeBtn:hover::before {
+        opacity: 1;
       }
       #modeBtn:focus-visible {
         outline: 2px solid var(--accent);
@@ -105,6 +160,19 @@
       #modeBtn .ic {
         width: 20px;
         height: 20px;
+        position: relative;
+        z-index: 1;
+        transition:
+          transform 0.55s var(--ease),
+          filter 0.3s ease,
+          opacity 0.3s ease;
+      }
+      #modeBtn:hover .ic {
+        transform: rotate(14deg) scale(1.06);
+        filter: brightness(1.12);
+      }
+      #modeBtn.swap .ic {
+        transform: rotate(180deg);
       }
       #modeBtn .ic-moon {
         display: none;
@@ -115,8 +183,20 @@
       body.night #modeBtn .ic-moon {
         display: block;
       }
-      body.night .nav {
-        background: rgba(4, 8, 14, 0.85);
+      #modeBtn .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(46, 194, 122, 0.32);
+        transform: scale(0);
+        animation: modeRipple 0.65s var(--ease) forwards;
+        pointer-events: none;
+        z-index: 0;
+      }
+      @keyframes modeRipple {
+        to {
+          transform: scale(2.6);
+          opacity: 0;
+        }
       }
       body.night .glass-card {
         background: linear-gradient(
@@ -127,7 +207,10 @@
       }
       .nav,
       .glass-card {
-        transition: background 0.6s ease;
+        transition:
+          background 0.42s ease,
+          color 0.42s ease,
+          border-color 0.42s ease;
       }
       #menuBtn {
         width: 44px;
@@ -136,60 +219,137 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: var(--bone);
-        background: transparent;
-        border: 1px solid var(--line);
+        color: #33475c;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(23, 43, 58, 0.16);
         border-radius: 50%;
         cursor: pointer;
+        position: relative;
+        transition:
+          transform 0.35s var(--ease),
+          border-color 0.35s ease,
+          background 0.42s ease,
+          box-shadow 0.35s ease,
+          color 0.35s ease;
+      }
+      body.night #menuBtn {
+        color: var(--bone);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(234, 241, 247, 0.16);
+      }
+      #menuBtn::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(46, 194, 122, 0.2),
+          transparent 68%
+        );
+        opacity: 0;
+        transition: opacity 0.35s ease;
+        pointer-events: none;
       }
       #menuBtn:hover {
-        border-color: var(--accent);
+        transform: scale(1.07);
+        border-color: rgba(46, 194, 122, 0.7);
+        box-shadow: 0 0 0 1px rgba(46, 194, 122, 0.22), 0 6px 22px rgba(46, 194, 122, 0.18);
+        color: #0f7a4e;
+      }
+      body.night #menuBtn:hover {
         color: var(--accent);
+        background: rgba(255, 255, 255, 0.1);
+      }
+      #menuBtn:hover::before {
+        opacity: 1;
       }
       #menuBtn:focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: 2px;
       }
-      #menuBtn .ic {
+      #menuBtn .burger {
         width: 20px;
-        height: 20px;
+        height: 14px;
+        position: relative;
+        display: block;
       }
+      #menuBtn .bl {
+        position: absolute;
+        left: 0;
+        width: 20px;
+        height: 2px;
+        border-radius: 2px;
+        background: currentColor;
+        transition:
+          transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1),
+          opacity 0.28s ease,
+          width 0.3s ease;
+      }
+      #menuBtn .bl1 { top: 0; }
+      #menuBtn .bl2 { top: 6px; }
+      #menuBtn .bl3 { top: 12px; }
+      #menuBtn:hover .bl1 { transform: translateX(-2px); }
+      #menuBtn:hover .bl3 { transform: translateX(2px); }
+      #menuBtn:hover .bl2 { width: 15px; margin-left: 2.5px; }
+      #menuBtn.open .bl1 { transform: translateY(6px) rotate(45deg); }
+      #menuBtn.open .bl2 { opacity: 0; transform: scaleX(0.2); }
+      #menuBtn.open .bl3 { transform: translateY(-6px) rotate(-45deg); }
+      #menuBtn.open:hover .bl1,
+      #menuBtn.open:hover .bl3 { transform: translateY(0) rotate(0); }
+      #menuBtn.open:hover .bl1 { transform: translateY(6px) rotate(45deg) scaleX(1.05); }
+      #menuBtn.open:hover .bl3 { transform: translateY(-6px) rotate(-45deg) scaleX(1.05); }
       #menuOverlay {
         position: fixed;
         inset: 0;
         z-index: 60;
         display: flex;
         justify-content: flex-end;
-        background: rgba(4, 9, 16, 0.45);
+        background: rgba(4, 9, 16, 0.42);
+        -webkit-backdrop-filter: blur(0px);
+        backdrop-filter: blur(0px);
         opacity: 0;
         visibility: hidden;
         transition:
-          opacity 0.35s ease,
-          visibility 0.35s;
+          opacity 0.38s ease,
+          visibility 0.38s,
+          backdrop-filter 0.38s ease,
+          -webkit-backdrop-filter 0.38s ease,
+          background 0.42s ease;
       }
       #menuOverlay.open {
         opacity: 1;
         visibility: visible;
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
       }
       .menu-panel {
-        width: min(420px, 92vw);
+        width: min(440px, 94vw);
         height: 100%;
         overflow-y: auto;
         background: linear-gradient(
           135deg,
-          rgba(255, 255, 255, 0.86),
-          rgba(244, 241, 234, 0.78)
+          rgba(255, 255, 255, 0.78),
+          rgba(248, 245, 238, 0.68)
         );
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-left: 1px solid rgba(255, 255, 255, 0.65);
+        -webkit-backdrop-filter: blur(28px) saturate(1.15);
+        backdrop-filter: blur(28px) saturate(1.15);
+        border-left: 1px solid rgba(255, 255, 255, 0.7);
         box-shadow: -24px 0 60px rgba(23, 43, 58, 0.18);
-        padding: 26px 28px 34px;
-        transform: translateX(24px);
-        transition: transform 0.35s ease;
+        padding: 26px 22px 34px;
+        transform: translateX(32px) scale(0.98);
+        opacity: 0;
+        filter: blur(6px);
+        transition:
+          transform 0.42s var(--ease),
+          opacity 0.32s ease,
+          filter 0.42s ease,
+          background 0.42s ease;
       }
       #menuOverlay.open .menu-panel {
         transform: none;
+        opacity: 1;
+        filter: blur(0);
       }
       body.night #menuOverlay {
         background: rgba(3, 7, 13, 0.55);
@@ -197,11 +357,13 @@
       body.night .menu-panel {
         background: linear-gradient(
           135deg,
-          rgba(16, 24, 36, 0.92),
-          rgba(10, 17, 27, 0.86)
+          rgba(16, 24, 36, 0.78),
+          rgba(10, 17, 27, 0.72)
         );
-        border-left-color: rgba(234, 241, 247, 0.14);
-        box-shadow: -24px 0 60px rgba(0, 0, 0, 0.5);
+        -webkit-backdrop-filter: blur(28px) saturate(1.1);
+        backdrop-filter: blur(28px) saturate(1.1);
+        border-left-color: rgba(46, 194, 122, 0.28);
+        box-shadow: -24px 0 60px rgba(0, 0, 0, 0.55);
       }
       .menu-head {
         display: flex;
@@ -212,6 +374,7 @@
         letter-spacing: 0.24em;
         color: #0f7a4e;
         margin-bottom: 14px;
+        padding: 0 6px;
       }
       body.night .menu-head {
         color: var(--accent);
@@ -227,6 +390,10 @@
         border: 1px solid rgba(23, 43, 58, 0.2);
         border-radius: 50%;
         cursor: pointer;
+        transition:
+          transform 0.3s var(--ease),
+          border-color 0.3s ease,
+          color 0.3s ease;
       }
       #menuClose .ic {
         width: 18px;
@@ -235,6 +402,7 @@
       #menuClose:hover {
         border-color: var(--accent);
         color: var(--accent);
+        transform: scale(1.06);
       }
       #menuClose:focus-visible {
         outline: 2px solid var(--accent);
@@ -251,40 +419,124 @@
       }
       .menu-list button {
         display: flex;
-        align-items: baseline;
+        align-items: center;
         gap: 16px;
-        padding: 15px 12px;
+        padding: 15px 14px;
         background: transparent;
         border: 0;
         border-bottom: 1px solid rgba(23, 43, 58, 0.1);
+        border-left: 2px solid transparent;
         color: #172b3a;
         font-size: 20px;
+        font-weight: 400;
         text-align: left;
         cursor: pointer;
-        border-radius: 8px;
+        border-radius: 10px;
+        position: relative;
+        opacity: 0;
+        transform: translateX(-15px);
+        will-change: transform, opacity;
+        transition:
+          opacity 0.38s ease,
+          transform 0.18s ease-out,
+          background 0.18s ease,
+          border-color 0.18s ease,
+          color 0.18s ease;
+      }
+      #menuOverlay.open .menu-list button {
+        opacity: 1;
+        transform: none;
       }
       .menu-list button b {
         font-size: 12px;
         letter-spacing: 0.18em;
-        color: #0f7a4e;
+        color: #5f7a72;
         font-weight: 700;
+        transition: color 0.18s ease;
+        min-width: 26px;
       }
-      .menu-list button:hover {
+      .menu-list button .m-arrow {
+        margin-left: auto;
+        font-size: 16px;
+        color: var(--accent);
+        opacity: 0;
+        transform: translateX(-8px);
+        transition:
+          opacity 0.18s ease,
+          transform 0.2s ease-out;
+      }
+      #menuOverlay.open .menu-list button:not(.active):hover {
         background: rgba(23, 43, 58, 0.06);
+        border-left-color: var(--accent);
+        transform: translateX(6px);
+        color: #0b1b2b;
+      }
+      .menu-list button:not(.active):hover b {
+        color: #0f7a4e;
+      }
+      .menu-list button:not(.active):hover .m-arrow {
+        opacity: 1;
+        transform: none;
       }
       .menu-list button:focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: 2px;
+      }
+      .menu-list button.active {
+        background: rgba(46, 194, 122, 0.12);
+        border-left-color: var(--accent);
+        color: #0b1b2b;
+        transition:
+          opacity 0.38s ease,
+          transform 0.42s var(--ease);
+      }
+      .menu-list button.active:hover {
+        background: rgba(46, 194, 122, 0.12);
+        border-left-color: var(--accent);
+        color: #0b1b2b;
+        transform: none;
+      }
+      .menu-list button.active b,
+      .menu-list button.active:hover b {
+        color: #0f7a4e;
+      }
+      .menu-list button.active .m-arrow,
+      .menu-list button.active:hover .m-arrow {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+      .menu-list button.active::after {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 10px rgba(46, 194, 122, 0.8);
+        margin-left: 6px;
+        flex: 0 0 auto;
       }
       body.night .menu-list button {
         color: #eaf1f7;
         border-bottom-color: rgba(234, 241, 247, 0.14);
       }
       body.night .menu-list button b {
+        color: #8fa3b7;
+      }
+      body.night .menu-list button:not(.active):hover {
+        background: rgba(234, 241, 247, 0.08);
+        color: #ffffff;
+      }
+      body.night .menu-list button:not(.active):hover b {
         color: var(--accent);
       }
-      body.night .menu-list button:hover {
-        background: rgba(234, 241, 247, 0.08);
+      body.night .menu-list button.active,
+      body.night .menu-list button.active:hover {
+        background: rgba(46, 194, 122, 0.14);
+        color: #ffffff;
+        transform: none;
+      }
+      body.night .menu-list button.active b {
+        color: var(--accent);
       }
       .brand {
         font-size: 12px;
@@ -293,6 +545,12 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        color: #172b3a;
+        transition: color 0.42s ease;
+        white-space: nowrap;
+      }
+      body.night .brand {
+        color: var(--bone);
       }
       .brand i {
         width: 9px;
@@ -300,30 +558,47 @@
         border-radius: 2px;
         background: var(--accent);
         display: inline-block;
-        box-shadow: 0 0 10px var(--accent);
+        box-shadow: 0 0 10px rgba(46, 194, 122, 0.7);
+        flex: 0 0 auto;
       }
       .brand span {
         font-weight: 500;
-        color: var(--accent);
+        color: #0f7a4e;
         font-size: 10px;
         letter-spacing: 0.2em;
+        transition: color 0.42s ease;
+      }
+      body.night .brand span {
+        color: var(--accent);
+      }
+      @media (max-width: 640px) {
+        .brand span { display: none; }
       }
       .nav-hint {
         margin-left: auto;
         font-size: 10px;
         letter-spacing: 0.16em;
         text-transform: uppercase;
-        color: var(--muted);
+        color: #5b6b7c;
         display: flex;
         align-items: center;
         gap: 8px;
+        transition: color 0.42s ease;
+        white-space: nowrap;
+      }
+      body.night .nav-hint {
+        color: var(--muted);
+      }
+      @media (max-width: 640px) {
+        .nav-hint { display: none; }
       }
       .dot {
         width: 6px;
         height: 6px;
         border-radius: 50%;
         background: var(--accent);
-        box-shadow: 0 0 10px var(--accent);
+        box-shadow: 0 0 10px rgba(46, 194, 122, 0.7);
+        flex: 0 0 auto;
       }
       .hero,
       .sec {
@@ -335,22 +610,87 @@
         justify-content: center;
       }
       .hero {
-        justify-content: flex-start;
+        min-height: 220svh;
+        display: block;
+        padding: 0 var(--pad);
+      }
+      .hero-pin {
+        position: sticky;
+        top: 0;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: var(--nav-h);
+        padding-bottom: 28px;
       }
       .hero-top {
-        padding: calc(var(--nav-h) + 26px) 30px 28px;
-        max-width: 650px;
-        background: linear-gradient(
-          100deg,
-          rgba(4, 9, 16, 0.52),
-          rgba(4, 9, 16, 0.18) 55%,
-          transparent 75%
-        );
-        border-radius: 20px;
+        position: relative;
+        max-width: 640px;
+        width: min(640px, 100%);
+        border-radius: 22px;
+        will-change: transform, opacity;
+        opacity: 0;
+        transform: translateX(-105%) scale(0.98);
+      }
+      .hero-glass {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: rgba(250, 248, 243, 0.6);
+        -webkit-backdrop-filter: blur(32px) saturate(1.2);
+        backdrop-filter: blur(32px) saturate(1.2);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow:
+          0 24px 70px rgba(23, 43, 58, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        pointer-events: none;
+      }
+      body.night .hero-glass {
+        background: rgba(8, 13, 24, 0.62);
+        -webkit-backdrop-filter: blur(32px) saturate(1.1);
+        backdrop-filter: blur(32px) saturate(1.1);
+        border: 1px solid rgba(234, 241, 247, 0.2);
+        box-shadow:
+          0 24px 70px rgba(0, 0, 0, 0.55),
+          inset 0 1px 0 rgba(234, 241, 247, 0.14);
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        padding: 34px 36px 30px;
+      }
+      .hero-top .eyebrow {
+        color: #0f7a4e;
+      }
+      body.night .hero-top .eyebrow {
+        color: var(--accent);
+      }
+      .hero-top .h-hero {
+        color: #132033;
+      }
+      body.night .hero-top .h-hero {
+        color: #f2f6fb;
+        text-shadow: 0 2px 22px rgba(0, 0, 0, 0.5);
+      }
+      .hero-top .body-lg {
+        color: #3a4a5c;
+      }
+      body.night .hero-top .body-lg {
+        color: #c3cfdd;
       }
       .h-hero,
       .hero-top .body-lg {
-        text-shadow: 0 2px 18px rgba(3, 8, 14, 0.55);
+        text-shadow: none;
+      }
+      body.night .h-hero,
+      body.night .hero-top .body-lg {
+        text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+      }
+      .hero-top .h-anim {
+        opacity: 0;
+        transform: translateY(14px);
+        will-change: transform, opacity;
       }
       .eyebrow,
       .kicker {
@@ -364,13 +704,40 @@
         gap: 10px;
         margin-bottom: 16px;
       }
+      .hero-top .eyebrow {
+        margin-bottom: 14px;
+      }
       .eyebrow .line {
         flex: 0 0 28px;
         height: 1px;
         background: var(--accent);
       }
+      .kicker {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(19, 32, 51, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        box-shadow: 0 4px 16px rgba(19, 32, 51, 0.18);
+      }
       .kicker b {
-        color: #0f7a4e;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #4fe08f;
+      }
+      body.night .kicker {
+        background: rgba(8, 14, 24, 0.72);
+        border-color: rgba(46, 194, 122, 0.45);
+        box-shadow: 0 0 14px rgba(46, 194, 122, 0.22);
+      }
+      body.night .kicker b {
+        color: var(--accent);
       }
       .display {
         font-weight: 400;
@@ -379,15 +746,17 @@
         text-transform: uppercase;
       }
       .h-hero {
-        font-size: clamp(32px, 4.4vw, 62px);
+        font-size: clamp(36px, 4.8vw, 68px);
+        margin: 0;
+        text-wrap: balance;
       }
       .h-sec {
-        font-size: clamp(28px, 3.5vw, 48px);
-        line-height: 1;
+        font-size: clamp(32px, 3.8vw, 52px);
+        line-height: 1.02;
       }
       .body-lg {
-        font-size: clamp(14px, 1.05vw, 17px);
-        line-height: 1.68;
+        font-size: clamp(15px, 1.15vw, 18.5px);
+        line-height: 1.7;
         color: #b8c7d8;
       }
       .grid2 {
@@ -405,33 +774,42 @@
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
-        margin-top: 18px;
+        margin-top: 20px;
       }
       .chip {
         font-size: 10px;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: #33475c;
-        border: 1px solid rgba(23, 43, 58, 0.18);
+        font-weight: 600;
+        color: #25394e;
+        border: 1px solid rgba(23, 43, 58, 0.2);
         padding: 7px 11px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.55);
+        background: rgba(255, 255, 255, 0.62);
       }
       body.night .chip {
-        color: #dfe7f0;
-        border-color: rgba(234, 241, 247, 0.3);
-        background: rgba(10, 18, 28, 0.55);
+        color: #e6edf5;
+        border-color: rgba(234, 241, 247, 0.28);
+        background: rgba(10, 18, 28, 0.6);
       }
       .hero-spacer {
         flex: 1 1 auto;
-        min-height: 16vh;
+        min-height: 4vh;
       }
-      .hero-foot {
-        padding-bottom: 26px;
-        color: var(--muted);
-        font-size: 10px;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
+      .hero {
+        overflow: clip;
+      }
+      @media (max-width: 860px) {
+        .hero-top {
+          border-radius: 18px;
+        }
+        .hero-content {
+          padding: 26px 22px 24px;
+        }
+        .hero-pin {
+          justify-content: flex-start;
+          padding-top: calc(var(--nav-h) + 18px);
+        }
       }
       .cam-label {
         position: fixed;
@@ -521,6 +899,11 @@
         align-items: flex-end;
         padding-top: 10vh;
       }
+      section[data-cam="2"] {
+        justify-content: center;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
       section[data-cam="3"] {
         justify-content: center;
         padding-top: 0;
@@ -533,8 +916,9 @@
       }
       @media (max-aspect-ratio: 16/10) {
         section[data-cam="5"] {
-          justify-content: flex-start;
-          padding-top: 10vh;
+          justify-content: center;
+          padding-top: 0;
+          padding-bottom: 0;
         }
       }
       section[data-cam="6"] {
@@ -546,6 +930,15 @@
           padding-top: 0;
           padding-bottom: 6vh;
         }
+      }
+      section[data-cam="1"] {
+        justify-content: flex-end;
+        padding-bottom: 14vh;
+      }
+      section[data-cam="5"] {
+        justify-content: center;
+        padding-top: 0;
+        padding-bottom: 0;
       }
       .glass-card {
         max-width: 560px;
@@ -566,11 +959,13 @@
       .glass-card .h-sec {
         margin: 0;
         color: #172b3a;
-        font-size: clamp(26px, 3vw, 42px);
+        font-size: clamp(30px, 3.4vw, 46px);
+        line-height: 1.04;
       }
       .glass-card .body-lg {
-        margin: 14px 0 0;
-        color: #475569;
+        margin: 16px 0 0;
+        color: #3d4f63;
+        font-weight: 400;
       }
       @media (max-width: 860px) {
         .sec-left {
@@ -583,17 +978,6 @@
         .glass-card {
           max-width: 100%;
         }
-      }
-      [data-rv] {
-        opacity: 0;
-        transform: translate3d(0, 16px, 0);
-        transition:
-          opacity 0.75s var(--ease),
-          transform 0.85s var(--ease);
-      }
-      [data-rv].rv-in {
-        opacity: 1;
-        transform: none;
       }
     </style>
   </head>
@@ -647,14 +1031,11 @@
         aria-controls="menuOverlay"
         aria-label="Buka menu fitur"
       >
-        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M4 7h16M4 12h16M4 17h16"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-        </svg>
+        <span class="burger" aria-hidden="true">
+          <span class="bl bl1"></span>
+          <span class="bl bl2"></span>
+          <span class="bl bl3"></span>
+        </span>
       </button>
     </nav>
     <div
@@ -678,44 +1059,46 @@
           </button>
         </div>
         <nav class="menu-list" aria-label="Daftar fitur">
-          <button type="button" data-goto="0"><b>01</b>Overview</button>
-          <button type="button" data-goto="1"><b>02</b>Asset Management</button>
-          <button type="button" data-goto="2"><b>03</b>Asset Borrowing</button>
-          <button type="button" data-goto="3"><b>04</b>Maintenance</button>
-          <button type="button" data-goto="4"><b>05</b>Depreciation</button>
-          <button type="button" data-goto="5"><b>06</b>Monitoring</button>
-          <button type="button" data-goto="6"><b>07</b>Audit Trail</button>
+          <button type="button" data-goto="0"><b>01</b><span>Overview</span><span class="m-arrow" aria-hidden="true">→</span></button>
+          <button type="button" data-goto="1"><b>02</b><span>Asset Management</span><span class="m-arrow" aria-hidden="true">→</span></button>
+          <button type="button" data-goto="2"><b>03</b><span>Asset Borrowing</span><span class="m-arrow" aria-hidden="true">→</span></button>
+          <button type="button" data-goto="3"><b>04</b><span>Maintenance</span><span class="m-arrow" aria-hidden="true">→</span></button>
+          <button type="button" data-goto="4"><b>05</b><span>Depreciation</span><span class="m-arrow" aria-hidden="true">→</span></button>
+          <button type="button" data-goto="5"><b>06</b><span>Monitoring</span><span class="m-arrow" aria-hidden="true">→</span></button>
+          <button type="button" data-goto="6"><b>07</b><span>Audit Trail</span><span class="m-arrow" aria-hidden="true">→</span></button>
         </nav>
       </div>
     </div>
     <div class="cam-label">
-      <b id="camMode">01 - OVERVIEW</b><span id="camInfo">facing west</span>
+      <b id="camMode">01 — OVERVIEW</b><span id="camInfo">office overview</span>
     </div>
     <div class="progress" id="progress"></div>
     <div class="page">
       <section class="hero" data-cam="0">
-        <div class="hero-top">
-          <div class="eyebrow">
-            <span class="line"></span> Assetrack - 3D Product Story
+        <div class="hero-pin">
+          <div class="hero-top" id="heroPanel">
+            <div class="hero-glass" aria-hidden="true"></div>
+            <div class="hero-content">
+            <div class="eyebrow h-anim" id="heroEyebrow">
+              <span class="line"></span> Assetrack, 3D Product Story
+            </div>
+            <h1 class="display h-hero h-anim" id="heroTitle">Kelola aset dalam<br />satu kantor.</h1>
+            <p class="body-lg h-anim" id="heroDesc" style="margin-top: 16px">
+              Satu open-plan office. Asset Management di tenggara,
+              Maintenance di timur laut, Depresiasi di barat daya,
+              Monitoring di barat laut.
+            </p>
+            <div class="chip-row h-anim" id="heroTags">
+              <span class="chip">Asset Management</span
+              ><span class="chip">Asset Borrowing</span
+              ><span class="chip">Maintenance</span
+              ><span class="chip">Depreciation</span
+              ><span class="chip">Monitoring</span
+              ><span class="chip">Audit Trail</span>
+            </div>
+            </div>
           </div>
-          <h1 class="display h-hero" data-rv>Kelola aset dalam satu kantor.</h1>
-          <p class="body-lg" data-rv style="margin-top: 16px">
-            Satu open-plan office. Asset Management di tenggara, Maintenance di
-            timur laut, Depresiasi di barat daya, Monitoring di barat laut.
-            Kamera membuka menghadap barat.
-          </p>
-          <div class="chip-row" data-rv>
-            <span class="chip">Asset Management</span
-            ><span class="chip">Asset Borrowing</span
-            ><span class="chip">Maintenance</span
-            ><span class="chip">Depreciation</span
-            ><span class="chip">Monitoring</span
-            ><span class="chip">Audit Trail</span>
-          </div>
-        </div>
-        <div class="hero-spacer"></div>
-        <div class="hero-foot" data-rv>
-          Scroll - mulai dari overview menghadap barat
+          <div class="hero-spacer"></div>
         </div>
       </section>
       <section class="sec sec-left" data-cam="1">
@@ -809,7 +1192,7 @@
         </div>
       </section>
       <footer class="foot">
-        AsseTrack - 3D scene evaluation / feature-driven layout
+        AsseTrack, 3D Feature Experience
       </footer>
     </div>
     <script src="three.min.js"></script>
@@ -1703,6 +2086,7 @@
         });
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.autoUpdate = false;
         renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.7));
         const vw = function () {
             return document.documentElement.clientWidth || innerWidth;
@@ -2227,15 +2611,35 @@
         }
         tableR(0, 0, 2.4);
         for (const per of [
-          [-2.9, 0.6, Math.PI / 2],
-          [2.9, -0.4, -Math.PI / 2],
-          [0.5, 2.9, Math.PI],
+          [-2.9, 0.6, Math.PI / 2, 0x17202d, 1],
+          [2.9, -0.4, -Math.PI / 2, 0x17202d, 1],
+          [0.5, 2.9, Math.PI, 0x17202d, 1],
+          [-1.9, -2.9, 0.5, 0x3a4a5c, 0.97],
+          [3.2, 1.7, -2.2, 0x5c5648, 1.03],
+          [-3.4, -1.3, 1.1, 0x2c5f8a, 0.95],
         ]) {
-          const pp = makePerson({ cloth: 0x17202d });
+          const pp = makePerson({ cloth: per[3], scale: per[4] });
           pp.position.set(per[0], 0, per[1]);
           pp.rotation.y = per[2];
           room.add(pp);
         }
+        box(0.3, 0.03, 0.22, 0x3f5a78, -1.2, 0.795, -0.7, 0.25);
+        box(0.08, 0.015, 0.16, 0x0d1724, -0.85, 0.788, -0.95, -0.3);
+        box(0.32, 0.012, 0.42, 0xf2f4f6, 1.0, 0.786, -0.9, 0.15);
+        box(0.3, 0.012, 0.4, 0xdfe6ee, 1.02, 0.798, -0.88, -0.08);
+        const hubPen = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.008, 0.008, 0.14, 8),
+          M(0x11151c, 0.6),
+        );
+        hubPen.rotation.z = Math.PI / 2;
+        hubPen.rotation.y = 0.4;
+        hubPen.position.set(0.72, 0.79, -0.52);
+        room.add(hubPen);
+        box(0.22, 0.015, 0.29, 0x0d1724, 1.35, 0.788, -0.35, 0.2);
+        box(0.19, 0.005, 0.26, 0x9fc4e8, 1.35, 0.798, -0.35, 0.2);
+        box(0.34, 0.02, 0.25, 0x8a6538, 0.4, 0.79, 1.3, -0.2);
+        box(0.28, 0.025, 0.2, 0xe7edf2, 0.42, 0.812, 1.28, 0.12);
+        cyl(0.045, 0.04, 0.11, 0x2ec27a, -0.05, 0.835, 1.15, 10);
         function tableR(x, z, r) {
           r = r || 0.95;
           const k = r / 0.95;
@@ -3137,13 +3541,90 @@
           { x: -13.2, z: 0.8 },
         ];
         const featLights = featZones.map(function (fz) {
-          const s = new THREE.SpotLight(0xffd9a8, 0.1, 16, 0.75, 0.65, 0);
+          const s = new THREE.SpotLight(0xffe2b8, 0.42, 24, 1.05, 0.7, 0);
           s.position.set(fz.x, 3.55, fz.z);
           s.target.position.set(fz.x, 0, fz.z);
           scene.add(s);
           scene.add(s.target);
-          return { light: s, cur: 0.1 };
+          return { light: s, cur: 0.42 };
         });
+        const fillCool = new THREE.PointLight(0xbfd9ff, 0.3, 20);
+        fillCool.position.set(0, 2.6, 5);
+        scene.add(fillCool);
+        const fillWarm = new THREE.PointLight(0xffe7c2, 0.3, 20);
+        fillWarm.position.set(0, 2.0, -5);
+        scene.add(fillWarm);
+        const centralLight = new THREE.PointLight(0xfff1d6, 0.5, 16);
+        centralLight.position.set(0, 3.3, 0);
+        scene.add(centralLight);
+        let fillCurC = 0.3;
+        let fillCurW = 0.3;
+        let centralCur = 0.5;
+        const featSecondOffsets = [
+          [1.9, 1.1],
+          [-1.9, 1.1],
+          [1.9, -1.1],
+          [-1.9, -1.1],
+          [1.9, 0],
+          [-1.9, 0],
+        ];
+        const featFill2 = featZones.map(function (fz, zi) {
+          const ox = featSecondOffsets[zi % featSecondOffsets.length][0];
+          const oz = featSecondOffsets[zi % featSecondOffsets.length][1];
+          const housing = new THREE.Mesh(
+            new THREE.BoxGeometry(2.4, 0.06, 0.7),
+            M(0x39424e, 0.4, 0.5),
+          );
+          housing.position.set(fz.x, 3.96, fz.z);
+          housing.userData.noCast = true;
+          room.add(housing);
+          const panel = new THREE.Mesh(
+            new THREE.BoxGeometry(2.2, 0.05, 0.5),
+            new THREE.MeshBasicMaterial({ color: 0xfff6e2 }),
+          );
+          panel.position.set(fz.x, 3.92, fz.z);
+          panel.userData.noCast = true;
+          lampMats.push(panel.material);
+          room.add(panel);
+          const housing2 = new THREE.Mesh(
+            new THREE.BoxGeometry(2.0, 0.06, 0.6),
+            M(0x39424e, 0.4, 0.5),
+          );
+          housing2.position.set(fz.x + ox, 3.96, fz.z + oz);
+          housing2.userData.noCast = true;
+          room.add(housing2);
+          const panel2 = new THREE.Mesh(
+            new THREE.BoxGeometry(1.8, 0.05, 0.42),
+            new THREE.MeshBasicMaterial({ color: 0xfff6e2 }),
+          );
+          panel2.position.set(fz.x + ox, 3.92, fz.z + oz);
+          panel2.userData.noCast = true;
+          lampMats.push(panel2.material);
+          room.add(panel2);
+          const s = new THREE.SpotLight(0xffe7c4, 0.22, 24, 1.0, 0.8, 0);
+          s.position.set(fz.x + ox, 3.5, fz.z + oz);
+          s.target.position.set(fz.x, 0, fz.z);
+          scene.add(s);
+          scene.add(s.target);
+          return { light: s, cur: 0.22 };
+        });
+        for (const cx of [-1.6, 1.6]) {
+          const housing = new THREE.Mesh(
+            new THREE.BoxGeometry(2.0, 0.06, 0.6),
+            M(0x39424e, 0.4, 0.5),
+          );
+          housing.position.set(cx, 3.96, 0);
+          housing.userData.noCast = true;
+          room.add(housing);
+          const panel = new THREE.Mesh(
+            new THREE.BoxGeometry(1.8, 0.05, 0.42),
+            new THREE.MeshBasicMaterial({ color: 0xfff6e2 }),
+          );
+          panel.position.set(cx, 3.92, 0);
+          panel.userData.noCast = true;
+          lampMats.push(panel.material);
+          room.add(panel);
+        }
         let nightTarget = 0;
         let nightT = 0;
         try {
@@ -3161,12 +3642,12 @@
         function applyEnv(t) {
           key.intensity = 1.05 + (0.14 - 1.05) * t;
           mixC(0xfff4df, 0x8fb4ff, t, key.color);
-          hemi.intensity = 1.0 + (0.32 - 1.0) * t;
+          hemi.intensity = 1.0 + (0.42 - 1.0) * t;
           mixC(0xfff6e6, 0x33415e, t, hemi.color);
           mixC(0x1a2a3a, 0x0a0f16, t, hemi.groundColor);
           fillL.intensity = 0.3 + (0.08 - 0.3) * t;
           backL.intensity = 0.25 + (0.1 - 0.25) * t;
-          renderer.toneMappingExposure = 1.1 + (0.95 - 1.1) * t;
+          renderer.toneMappingExposure = 1.1 + (1.0 - 1.1) * t;
           mixC(0x142233, 0x05090f, t, scene.background);
           mixC(0x142233, 0x05090f, t, scene.fog.color);
           scene.fog.density = 0.01 + (0.013 - 0.01) * t;
@@ -3193,6 +3674,12 @@
               "aria-label",
               night ? "Aktifkan mode siang" : "Aktifkan mode malam",
             );
+            btn.classList.remove("swap");
+            void btn.offsetWidth;
+            btn.classList.add("swap");
+            window.setTimeout(function () {
+              btn.classList.remove("swap");
+            }, 600);
           }
           try {
             window.localStorage.setItem(
@@ -3204,81 +3691,115 @@
         syncModeUI();
         document
           .getElementById("modeBtn")
-          .addEventListener("click", function () {
+          .addEventListener("click", function (ev) {
+            const btn = this;
+            try {
+              const r = btn.getBoundingClientRect();
+              const s = document.createElement("span");
+              s.className = "ripple";
+              const sz = Math.max(r.width, r.height) * 1.1;
+              s.style.width = sz + "px";
+              s.style.height = sz + "px";
+              s.style.left =
+                (ev.clientX - r.left - sz / 2 || r.width / 2 - sz / 2) + "px";
+              s.style.top =
+                (ev.clientY - r.top - sz / 2 || r.height / 2 - sz / 2) + "px";
+              btn.appendChild(s);
+              window.setTimeout(function () {
+                if (s.parentNode) s.parentNode.removeChild(s);
+              }, 700);
+            } catch (e) {}
             nightTarget = nightTarget === 1 ? 0 : 1;
             syncModeUI();
           });
-        /* Frozen camera: endpoints, scroll mapping, easing and damping tuned per shot. See CAMERA_LOCK.md. */
+        /* ============================================================
+           CAMERA ENDPOINT LOCK — DO NOT MODIFY WITHOUT USER APPROVAL
+           Every position/target below is a finalized feature endpoint.
+           Scroll mapping, easing, and damping read from this table, so any
+           edit here moves the final camera. If a future request touches a
+           locked endpoint (move/retarget/reposition any shot, change the
+           mapping that lands on it), warn the user first and wait for
+           explicit confirmation. See CAMERA_LOCK.md.
+           ============================================================ */
         const shots = [
           {
+            // [LOCKED CAMERA ENDPOINT] 01 Overview. Do not change.
             x: 13.2,
             y: 3.5,
             z: 1.0,
             tx: -3,
             ty: 1.0,
             tz: 1.0,
-            label: "01 - OVERVIEW",
-            info: "facing west",
+            label: "01 — OVERVIEW",
+            info: "office overview",
           },
           {
+            // [LOCKED CAMERA ENDPOINT] 02 Asset Management. Scrolling
+            // endpoint stays locked; only the menu landing offset below
+            // (gotoSection) may place the initial view. Do not change.
             x: 8.8,
             y: 1.9,
             z: 6.3,
             tx: 6.3,
             ty: 1.05,
             tz: 7.0,
-            label: "02 - ASSET MANAGEMENT",
+            label: "02 — ASSET MANAGEMENT",
             info: "projector + QR hero",
           },
           {
-            x: 7.9,
-            y: 1.75,
-            z: 1.9,
-            tx: 9.55,
-            ty: 0.9,
-            tz: 3.35,
-            label: "03 - ASSET BORROWING",
+            // [LOCKED CAMERA ENDPOINT] 03 Asset Borrowing. Do not change.
+            x: 8.2,
+            y: 1.7,
+            z: 2.75,
+            tx: 9.65,
+            ty: 1.0,
+            tz: 3.85,
+            label: "03 — ASSET BORROWING",
             info: "tablet + laptop QR",
           },
           {
+            // [LOCKED CAMERA ENDPOINT] 04 Maintenance. Do not change.
             x: 5.2,
             y: 2.0,
             z: -4.8,
             tx: 8.5,
             ty: 2.1,
             tz: -7.2,
-            label: "04 - MAINTENANCE",
-            info: "reserved NE",
+            label: "04 — MAINTENANCE",
+            info: "AC unit + technician",
           },
           {
+            // [LOCKED CAMERA ENDPOINT] 05 Depreciation. Do not change.
             x: -5.0,
             y: 2.0,
             z: 3.8,
             tx: -8,
             ty: 1.6,
             tz: 7.5,
-            label: "05 - DEPRECIATION",
-            info: "reserved SW",
+            label: "05 — DEPRECIATION",
+            info: "financial display",
           },
           {
+            // [LOCKED CAMERA ENDPOINT] 06 Monitoring. Do not change.
             x: -4.0,
             y: 2.2,
             z: -3.5,
             tx: -9,
             ty: 1.8,
             tz: -7,
-            label: "06 - MONITORING",
-            info: "reserved NW",
+            label: "06 — MONITORING",
+            info: "control room",
           },
           {
+            // [LOCKED CAMERA ENDPOINT] 07 Audit Trail. Do not change.
             x: -10.5,
             y: 2.0,
             z: 0,
             tx: -14.8,
             ty: 1.7,
             tz: 0,
-            label: "07 - AUDIT TRAIL",
-            info: "reserved W",
+            label: "07 — AUDIT TRAIL",
+            info: "verification desk",
           },
         ];
         let curF = 0;
@@ -3307,10 +3828,95 @@
           const i = document.createElement("i");
           progress.appendChild(i);
         });
-        function updateTargets() {
-          const max = document.body.scrollHeight - innerHeight,
-            p = max <= 0 ? 0 : clamp(scrollY / max, 0, 1),
-            f = p * (shots.length - 1),
+        function heroPhase(p) {
+          if (p <= 0.001) return "INITIAL_OVERVIEW";
+          if (p < 0.095) return "HERO_REVEAL";
+          if (p < 0.195) return "HERO_HOLD";
+          if (p < 0.285) return "CAMERA_START";
+          return "FEATURE_JOURNEY";
+        }
+        const heroPanel = document.getElementById("heroPanel");
+        const heroEyebrow = document.getElementById("heroEyebrow");
+        const heroTitle = document.getElementById("heroTitle");
+        const heroDesc = document.getElementById("heroDesc");
+        const heroTags = document.getElementById("heroTags");
+        const heroChips = heroTags
+          ? Array.prototype.slice.call(heroTags.querySelectorAll(".chip"))
+          : [];
+        function easeOutCubic(x) {
+          return 1 - Math.pow(1 - x, 3);
+        }
+        function subProg(hr, from, to) {
+          return clamp((hr - from) / (to - from), 0, 1);
+        }
+        function updateHero(p) {
+          if (!heroPanel) return;
+          const hr = clamp(p / 0.095, 0, 1);
+          const hrE = easeOutCubic(hr);
+          const he = clamp((p - 0.195) / (0.285 - 0.195), 0, 1);
+          const heE = he * he * (3 - 2 * he);
+          const enterX = (1 - hrE) * -105;
+          const exitY = heE * -28;
+          const exitScale = 1 - heE * 0.02;
+          const panelScale = (0.98 + 0.02 * hrE) * exitScale;
+          const panelOpacity = hrE * (1 - heE);
+          heroPanel.style.opacity = panelOpacity.toFixed(3);
+          heroPanel.style.transform =
+            "translateX(" +
+            enterX.toFixed(2) +
+            "%) translateY(" +
+            exitY.toFixed(2) +
+            "vh) scale(" +
+            panelScale.toFixed(4) +
+            ")";
+          heroPanel.style.visibility = panelOpacity < 0.02 ? "hidden" : "visible";
+          heroPanel.style.pointerEvents = panelOpacity < 0.4 ? "none" : "auto";
+          function setItem(el, prog, dy) {
+            if (!el) return;
+            const e = easeOutCubic(prog);
+            el.style.opacity = e.toFixed(3);
+            el.style.transform =
+              e >= 0.999
+                ? ""
+                : "translateY(" + ((1 - e) * dy).toFixed(1) + "px)";
+          }
+          setItem(heroEyebrow, easeOutCubic(subProg(hr, 0.0, 0.45)), 12);
+          setItem(heroTitle, easeOutCubic(subProg(hr, 0.12, 0.6)), 20);
+          setItem(heroDesc, easeOutCubic(subProg(hr, 0.28, 0.75)), 15);
+          const tagProg = easeOutCubic(subProg(hr, 0.45, 0.72));
+          if (heroTags) {
+            heroTags.style.opacity = tagProg.toFixed(3);
+            heroTags.style.transform =
+              tagProg >= 0.999
+                ? ""
+                : "translateY(" + ((1 - tagProg) * 10).toFixed(1) + "px)";
+          }
+          heroChips.forEach(function (c, i) {
+            const cp = easeOutCubic(
+              subProg(hr, 0.5 + i * 0.07, 0.75 + i * 0.07),
+            );
+            c.style.opacity = cp.toFixed(3);
+            c.style.transform =
+              cp >= 0.999
+                ? ""
+                : "translateY(" + ((1 - cp) * 10).toFixed(1) + "px)";
+          });
+        }
+        let rawP = 0;
+        let smoothP = 0;
+        let heroDispP = 0;
+        let lastActive = -1;
+        let lastSmP = NaN;
+        let lastHeroP = NaN;
+        let lastEnvT = NaN;
+        const _weights = [0, 0, 0, 0, 0, 0];
+        const progBars = document.querySelectorAll("#progress i");
+        const menuBtns = document.querySelectorAll(".menu-list button");
+        const camModeEl = document.getElementById("camMode");
+        const camInfoEl = document.getElementById("camInfo");
+        function updateSmoothTargets(sp) {
+          const camP = sp <= 0.195 ? 0 : (sp - 0.195) / (1 - 0.195),
+            f = camP * (shots.length - 1),
             idx = Math.min(Math.floor(f), shots.length - 2),
             t = f - idx,
             a = shots[idx],
@@ -3338,30 +3944,68 @@
           }
           const dA = Math.abs(f - 1);
           tgtFloat = clamp(1 - (dA - 0.3) / 0.3, 0, 1);
+        }
+        function updateTargets() {
+          const max = document.body.scrollHeight - innerHeight,
+            p = max <= 0 ? 0 : clamp(scrollY / max, 0, 1),
+            camP = p <= 0.195 ? 0 : (p - 0.195) / (1 - 0.195),
+            f = camP * (shots.length - 1);
+          rawP = p;
           const active = Math.min(Math.round(f), sections.length - 1);
-          document.querySelectorAll("#progress i").forEach(function (el, i) {
-            el.style.setProperty("--fill", i <= active ? 1 : 0);
-            el.classList.toggle("on", i === active);
-          });
-          const lab = shots[Math.round(f)] || shots[0];
-          document.getElementById("camMode").textContent = lab.label;
-          document.getElementById("camInfo").textContent = lab.info;
+          if (active !== lastActive) {
+            lastActive = active;
+            progBars.forEach(function (el, i) {
+              el.style.setProperty("--fill", i <= active ? 1 : 0);
+              el.classList.toggle("on", i === active);
+            });
+            const lab = shots[active] || shots[0];
+            camModeEl.textContent = lab.label;
+            camInfoEl.textContent = lab.info;
+            menuBtns.forEach(function (btn) {
+              const g = Number(btn.getAttribute("data-goto"));
+              btn.classList.toggle("active", g === active);
+            });
+          }
         }
         window.addEventListener("scroll", updateTargets, { passive: true });
+        const featCards = sections
+          .filter(function (s) {
+            return s.getAttribute("data-cam") !== "0";
+          })
+          .map(function (s) {
+            return s.querySelector(".glass-card");
+          })
+          .filter(Boolean);
         updateTargets();
+        smoothP = rawP;
+        heroDispP = rawP;
+        updateSmoothTargets(smoothP);
+        updateFeatureBoxes(curF);
+        updateHero(heroDispP);
         camera.position.set(cur.x, cur.y, cur.z);
         camera.lookAt(cur.tx, cur.ty, cur.tz);
-        const io = new IntersectionObserver(
-          function (es) {
-            es.forEach(function (e) {
-              if (e.isIntersecting) e.target.classList.add("rv-in");
-            });
-          },
-          { threshold: 0.13 },
-        );
-        document.querySelectorAll("[data-rv]").forEach(function (e) {
-          io.observe(e);
-        });
+        function updateFeatureBoxes(f) {
+          for (let i = 0; i < featCards.length; i++) {
+            const card = featCards[i];
+            const fi = i + 1;
+            const fadeIn = clamp((f - (fi - 0.55)) / 0.5, 0, 1);
+            const inE = fadeIn * fadeIn * (3 - 2 * fadeIn);
+            const fadeOut = clamp((f - (fi + 0.15)) / 0.6, 0, 1);
+            const outE = fadeOut * fadeOut * (3 - 2 * fadeOut);
+            const op = inE * (1 - outE);
+            const ty = (1 - inE) * 36 - outE * 14;
+            const bl = (1 - inE) * 4 + outE * 3;
+            card.style.opacity = op.toFixed(3);
+            card.style.transform =
+              op >= 0.999 && Math.abs(ty) < 0.05
+                ? ""
+                : "translateY(" + ty.toFixed(1) + "px)";
+            card.style.filter =
+              bl < 0.15 ? "" : "blur(" + bl.toFixed(1) + "px)";
+            card.style.visibility = op < 0.02 ? "hidden" : "visible";
+            card.style.pointerEvents = op < 0.4 ? "none" : "auto";
+          }
+        }
         window.addEventListener("resize", function () {
           renderer.setSize(vw(), vh(), true);
           camera.aspect = vw() / vh();
@@ -3371,12 +4015,25 @@
         function tick(now) {
           const dt = Math.min(0.05, (now - last) / 1000);
           last = now;
-          cur.x = damp(cur.x, tgt.x, 3.2, dt);
-          cur.y = damp(cur.y, tgt.y, 3.2, dt);
-          cur.z = damp(cur.z, tgt.z, 3.2, dt);
-          cur.tx = damp(cur.tx, tgt.tx, 3.0, dt);
-          cur.ty = damp(cur.ty, tgt.ty, 3.0, dt);
-          cur.tz = damp(cur.tz, tgt.tz, 3.0, dt);
+          smoothP = damp(smoothP, rawP, 2.6, dt);
+          if (Math.abs(smoothP - rawP) < 0.0004) smoothP = rawP;
+          heroDispP = damp(heroDispP, rawP, 4.5, dt);
+          if (Math.abs(heroDispP - rawP) < 0.0004) heroDispP = rawP;
+          if (smoothP !== lastSmP) {
+            lastSmP = smoothP;
+            updateSmoothTargets(smoothP);
+            updateFeatureBoxes(curF);
+          }
+          if (heroDispP !== lastHeroP) {
+            lastHeroP = heroDispP;
+            updateHero(heroDispP);
+          }
+          cur.x = damp(cur.x, tgt.x, 2.4, dt);
+          cur.y = damp(cur.y, tgt.y, 2.4, dt);
+          cur.z = damp(cur.z, tgt.z, 2.4, dt);
+          cur.tx = damp(cur.tx, tgt.tx, 2.2, dt);
+          cur.ty = damp(cur.ty, tgt.ty, 2.2, dt);
+          cur.tz = damp(cur.tz, tgt.tz, 2.2, dt);
           if (!isFinite(cur.x + cur.y + cur.z + cur.tx + cur.ty + cur.tz)) {
             cur.x = tgt.x;
             cur.y = tgt.y;
@@ -3388,15 +4045,47 @@
           camera.position.set(cur.x, cur.y, cur.z);
           camera.lookAt(cur.tx, cur.ty, cur.tz);
           nightT = damp(nightT, nightTarget, 1.6, dt);
-          applyEnv(nightT);
-          const ai = Math.round(clamp(curF, 0, 6));
-          const zi = ai === 0 ? -1 : ai - 1;
+          if (Math.abs(nightT - nightTarget) < 0.0005) nightT = nightTarget;
+          if (nightT !== lastEnvT) {
+            lastEnvT = nightT;
+            applyEnv(nightT);
+          }
+          const weights = _weights;
+          let wMax = 0;
+          for (let fi = 0; fi < featLights.length; fi++) {
+            const w = clamp(1 - Math.abs(curF - (fi + 1)) / 1.1, 0, 1);
+            weights.push(w);
+            if (w > wMax) {
+              wMax = w;
+            }
+          }
           for (let fi = 0; fi < featLights.length; fi++) {
             const fl = featLights[fi];
-            const want = 0.1 + nightT * (0.25 + (fi === zi ? 0.85 : 0));
+            const w = weights[fi];
+            const day = 0.42 + w * 0.5;
+            const night = 0.5 + w * 1.95;
+            const want = day + (night - day) * nightT;
             fl.cur = damp(fl.cur, want, 2.5, dt);
             fl.light.intensity = fl.cur;
+            const f2 = featFill2[fi];
+            const day2 = 0.22 + w * 0.3;
+            const night2 = 0.28 + w * 1.0;
+            const want2 = day2 + (night2 - day2) * nightT;
+            f2.cur = damp(f2.cur, want2, 2.5, dt);
+            f2.light.intensity = f2.cur;
           }
+          const wDay = 0.28 + wMax * 0.4;
+          const wNight = 0.32 + wMax * 1.0;
+          fillCurC = damp(fillCurC, wDay + (wNight - wDay) * nightT, 2.5, dt);
+          fillCool.intensity = fillCurC;
+          const vDay = 0.28 + wMax * 0.38;
+          const vNight = 0.3 + wMax * 0.95;
+          fillCurW = damp(fillCurW, vDay + (vNight - vDay) * nightT, 2.5, dt);
+          fillWarm.intensity = fillCurW;
+          const cDay = 0.45;
+          const cNight = 0.95;
+          centralCur = damp(centralCur, cDay + (cNight - cDay) * nightT, 2.0, dt);
+          centralLight.intensity = centralCur;
           curFloat = damp(curFloat, tgtFloat, 4.0, dt);
           if (Math.abs(curFloat - tgtFloat) < 0.01) curFloat = tgtFloat;
           updateFloatingScreen(floatAsset, curFloat);
@@ -3423,6 +4112,7 @@
           renderer.render(scene, camera);
           requestAnimationFrame(tick);
         }
+        renderer.shadowMap.needsUpdate = true;
         requestAnimationFrame(tick);
         /* Landing menu: anchors into the existing scroll sections. */
         (function () {
@@ -3433,18 +4123,46 @@
           function openMenu() {
             lastFocus = document.activeElement;
             overlay.classList.add("open");
+            btn.classList.add("open");
             btn.setAttribute("aria-expanded", "true");
+            btn.setAttribute("aria-label", "Tutup menu fitur");
             document.body.style.overflow = "hidden";
+            const items = overlay.querySelectorAll("[data-goto]");
+            items.forEach(function (it, i) {
+              it.style.transitionDelay = i * 0.065 + "s";
+            });
             const first = overlay.querySelector("[data-goto]");
             if (first) first.focus();
           }
           function closeMenu() {
             overlay.classList.remove("open");
+            btn.classList.remove("open");
             btn.setAttribute("aria-expanded", "false");
+            btn.setAttribute("aria-label", "Buka menu fitur");
             document.body.style.overflow = "";
+            const items = overlay.querySelectorAll("[data-goto]");
+            items.forEach(function (it) {
+              it.style.transitionDelay = "0s";
+            });
             if (lastFocus && lastFocus.focus) lastFocus.focus();
           }
           function gotoSection(i) {
+            if (i === 0) {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              return;
+            }
+            if (i === 1) {
+              // Asset Management menu entry lands exactly on the locked
+              // scrolling endpoint (f = 1). Generic section centering stops
+              // short of it and frames the view too high. Scroll mapping,
+              // endpoint, path, and easing are untouched.
+              const max = document.body.scrollHeight - innerHeight;
+              window.scrollTo({
+                top: Math.max(0, Math.round(max * (0.195 + (1 / 6) * (1 - 0.195)))),
+                behavior: "smooth",
+              });
+              return;
+            }
             const secs = [...document.querySelectorAll("[data-cam]")];
             const s = secs[i];
             if (!s) return;
